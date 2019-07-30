@@ -1,0 +1,144 @@
+<?xml version="1.0" encoding="UTF-8"?><record_update table="sp_widget">
+    <sp_widget action="INSERT_OR_UPDATE">
+        <category>custom</category>
+        <client_script><![CDATA[function($uibModal,$scope,$rootScope) {
+	/* widget controller */
+	var c = this;
+
+	$rootScope.$on('selectTask', function(event,data) {
+		c.server.get({
+			action: 'getTask',
+			taskID: $rootScope.taskID
+		}).then(function(r) {
+			c.data.title = r.data.task.title;
+			c.data.description = r.data.task.description;
+			c.data.taskID = r.data.task.sys_id;
+		}).then(function() {
+			c.modalInstance = $uibModal.open({
+				templateUrl: 'modalTemplate',
+				scope: $scope
+			});
+		});
+	});
+
+	c.updateTask = function(updateType) {
+		c.server.get({
+			action: 'updateTask',
+			taskID: c.data.taskID,
+			taskDescription: c.data.description,
+			taskTitle: c.data.title
+		}).then(function(r) {
+		});
+	}
+
+	c.closeModal = function() {
+		c.modalInstance.close();
+	}
+
+}]]></client_script>
+        <controller_as>c</controller_as>
+        <css/>
+        <data_table>sp_instance</data_table>
+        <demo_data/>
+        <description/>
+        <docs/>
+        <field_list/>
+        <has_preview>false</has_preview>
+        <id>edit_task_model</id>
+        <internal>false</internal>
+        <link><![CDATA[function link(scope, element, attrs, controller) {  }]]></link>
+        <name>Edit Task Model</name>
+        <option_schema/>
+        <public>false</public>
+        <roles/>
+        <script><![CDATA[(function() {
+	/* populate the 'data' object */
+
+	if (input && input.taskID) {
+		var task = new GlideRecord('x_380098_gtd_tasks');
+		if (task.get(input.taskID)) {
+			if (input.action == 'getTask') {
+				data.task = {};
+				$sp.getRecordValues(data.task, task, "title, description, sys_id");
+			}
+			else if (input.action == 'updateTask') { 
+				task.title = input.taskTitle; 
+				task.description = input.taskDescription; 
+				task.update(); 
+			}
+		}
+	}
+})();]]></script>
+        <servicenow>false</servicenow>
+        <sys_class_name>sp_widget</sys_class_name>
+        <sys_created_by>admin</sys_created_by>
+        <sys_created_on>2019-07-30 07:18:41</sys_created_on>
+        <sys_id>7ac7b688db0f3300831ce37a4896199d</sys_id>
+        <sys_mod_count>20</sys_mod_count>
+        <sys_name>Edit Task Model</sys_name>
+        <sys_package display_value="GTD" source="x_380098_gtd">f8b6f91fdb663300506da08a489619bc</sys_package>
+        <sys_policy/>
+        <sys_scope display_value="GTD">f8b6f91fdb663300506da08a489619bc</sys_scope>
+        <sys_update_name>sp_widget_7ac7b688db0f3300831ce37a4896199d</sys_update_name>
+        <sys_updated_by>admin</sys_updated_by>
+        <sys_updated_on>2019-07-30 10:16:10</sys_updated_on>
+        <template><![CDATA[<head>
+
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+
+</head>
+<body>
+
+
+  <div class="panel panel-default" ng-show="c.data.taskID">
+    <div class="panel-heading clearfix">
+      <div class="row">
+        <div class="col-md-12">
+          <input class="form-control" id="task-title" ng-model="c.data.title" ng-change="c.updateTask('title')" ng-model-options="{debounce: 1000}"/>
+        </div>
+      </div>
+    </div>
+    <div class="panel-body">
+      <textarea class="form-control" id="task-description" ng-model="c.data.description" ng-change="c.updateTask('description')" ng-model-options="{debounce: 1000}"></textarea>
+    </div>
+  </div>
+
+
+<script type="text/ng-template" id="modalTemplate">
+<div class="panel panel-default">
+<div class="panel-heading">
+<h4 class="panel-title">Modal Window</h4>
+</div>
+<div class="panel-body wrapper-xl">
+{{c.data.description}}
+</div>
+<div class="panel-footer text-right">
+<button class="btn btn-primary" ng-click="c.closeModal()">I'm Done!</button>
+</div>
+</div>
+</script>
+</body>
+
+ <script type="text/ng-template" id="modalTemplate">
+  <div class="modal" tabindex="-1" role="dialog">
+    <div class="modal-dialog" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title">Modal title</h5>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+    </button>
+    </div>
+        <div class="modal-body">
+          <p>Modal body text goes here.</p>
+    </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+          <button type="button" class="btn btn-primary">Save changes</button>
+    </div>
+    </div>
+    </div>
+    </div>
+</script>]]></template>
+    </sp_widget>
+</record_update>

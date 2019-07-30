@@ -1,57 +1,23 @@
 <?xml version="1.0" encoding="UTF-8"?><record_update table="sp_widget">
     <sp_widget action="INSERT_OR_UPDATE">
         <category>custom</category>
-        <client_script><![CDATA[function() {
+        <client_script><![CDATA[function($rootScope,$scope) {
 	/* widget controller */
 	var c = this;
-	var property = '';
-
-	c.display = function() {
-		c.data.message = (c.data.sometext) ? 'Hello ' + c.data.sometext + '!' : '';
-		for(var property in c.data){
-			console.log('c.data.' + property + ": " + c.data[property]);
-		}
+	c.selectItem = function(sysId) {
+		var id = sysId;
+		console.log('Task ID: ' + id);
+		$rootScope.taskID = id;
+		$rootScope.$emit('selectTask', id);
 	}
-	c.display();
-}]]></client_script>
+
+}
+
+]]></client_script>
         <controller_as>c</controller_as>
-        <css>#board {
-  display: table;
-  margin: 0;
-  padding: 0;
-  border-spacing: 5px;
-}
-.section {
-  display: table-cell;
-  margin: 0;
-  border: 1px solid #666;
-  padding: 5px;
-  width: 300px;
-}
-.section.droppable {
-  border: 1px dashed #666;
-}
-.section &gt; h1 {
-  margin: 0;
-  border-bottom: 1px solid #999;
-  padding: 0;
-  font-size: 12pt;
-  text-align: center;
-}
-.card {
-  display: inline-block;
-  vertical-align: top;
-  margin: 10px 5px;
-  padding: 10px;
-  width: 100px;
-  height: 100px;
-  color: black;
-  background: #ff8;
-  cursor: move;
-  text-align: center;
-  font-family: "Helvetica Neue", Helvetica, Arial, "Lucida Grande", sans-serif;
-  box-shadow: 2px 2px 2px #eee;
-}</css>
+        <css>body {
+padding-top: 1em;
+}	</css>
         <data_table>sp_instance</data_table>
         <demo_data/>
         <description/>
@@ -68,19 +34,25 @@
         <script><![CDATA[(function() {
 	//create an array to populate without tasks
 	data.tasks = [];
+	data.categories = [];
 	var queryString = 'assigned_to=' + gs.getUserID() + '^ORsys_created_by=' + gs.getUserName();
 	var taskGR = new GlideRecord('x_380098_gtd_tasks');
 	taskGR.addEncodedQuery(queryString);
-	taskGR.orderByDesc('sys_created_on');
+	taskGR.addQuery('state','0');
+	taskGR.orderBy('priority');
 	taskGR.query();
 	while (taskGR.next()) {
 		var taskObj = {};
 		//use service portal helper method to get some display values
-		$sp.getRecordDisplayValues(taskObj, taskGR, 'number,title,sys_id');
+		$sp.getRecordDisplayValues(taskObj, taskGR, 'title,category,assigned_to,sys_id');
 		//get the first 20 characters of the description
-		taskObj.description = taskGR.getValue('description').slice(0,20);
+		taskObj.description = taskGR.getValue('description').slice(0,50);
+		taskObj.priority = taskGR.getValue('priority');
 		//push the populated obj into the array
 		data.tasks.push(taskObj);
+		if(data.categories.indexOf(taskGR.getDisplayValue('category')) == -1) {
+			data.categories.push(taskGR.getDisplayValue('category'));
+		}
 	}
 })();]]></script>
         <servicenow>false</servicenow>
@@ -88,119 +60,52 @@
         <sys_created_by>admin</sys_created_by>
         <sys_created_on>2019-07-18 08:01:47</sys_created_on>
         <sys_id>5d9e0990db72330052520181ca96191d</sys_id>
-        <sys_mod_count>23</sys_mod_count>
+        <sys_mod_count>113</sys_mod_count>
         <sys_name>Kanban Board</sys_name>
         <sys_package display_value="GTD" source="x_380098_gtd">f8b6f91fdb663300506da08a489619bc</sys_package>
         <sys_policy/>
         <sys_scope display_value="GTD">f8b6f91fdb663300506da08a489619bc</sys_scope>
         <sys_update_name>sp_widget_5d9e0990db72330052520181ca96191d</sys_update_name>
         <sys_updated_by>admin</sys_updated_by>
-        <sys_updated_on>2019-07-29 10:05:42</sys_updated_on>
+        <sys_updated_on>2019-07-30 09:30:12</sys_updated_on>
         <template><![CDATA[<html>
+  <head>
+
+    <!-- Latest compiled and minified Bootstrap CSS -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+
+  </head>
   <body>
-    <h1>
-      ${Tasks}
-    </h1>
-    <div id="board">
-      <div id="todo" class="section">
-        <h1>To Do</h1>
-        <div id="c2" class="card">Make Killer App</div>
-        <div id="c3" class="card"><em>Retire!</em></div>
-      </div>
-      <div id="doing" class="section">
-        <h1>Doing</h1>
-        <div id="c1" class="card">Learn HTML5</div>
-      </div>
-      <div id="done" class="section">
-        <h1>Done</h1>
+    
+    <div class="container-fluid row">
+      <div class="col-sm" ng-repeat="category in data.categories">
+        
+        <h1 class="text-center">{{category}}</h1>
+         
+        <div class="card-group">
+      <div class="container-fluid" ng-repeat="task in data.tasks | filter: category">
+
+        <div class="card card-body">
+          <h4 class="card-title" ng-click="c.selectItem(task.sys_id)"><span class="badge badge-pill badge-info">P{{task.priority}}</span> {{task.title}}</h4>
+          <h6 class="card-subtitle text-muted">{{task.assigned_to}}</h6>
+          <p class="card-text">{{task.description}}</p>
+        </div>
+
       </div>
     </div>
+        
+      </div>
+    </div>
+    
+    <!-- jQuery library -->
+    <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
 
-    <script>
-      var cards = document.querySelectorAll('.card');
-      for (var i = 0, n = cards.length; i < n; i++) {
-        var card = cards[i];
-        card.draggable = true;
-      };
-      var board = document.getElementById('board');
-      var hideMe;
-      board.onselectstart = function(e) {
-        e.preventDefault();
-      }
-      board.ondragstart = function(e) {
-        console.log('dragstart');
-        hideMe = e.target;
-        e.dataTransfer.setData('card', e.target.id);
-        e.dataTransfer.effectAllowed = 'move';
-      };
-      board.ondragend = function(e) {
-        e.target.style.visibility = 'visible';
-      };
-      var lastEneterd;
-      board.ondragenter = function(e) {
-        console.log('dragenter');
-        if (hideMe) {
-          hideMe.style.visibility = 'hidden';
-          hideMe = null;
-        }
-        // Save this to check in dragleave.
-        lastEntered = e.target;
-        var section = closestWithClass(e.target, 'section');
-        // TODO: Check that it's not the original section.
-        if (section) {
-          section.classList.add('droppable');
-          e.preventDefault(); // Not sure if these needs to be here. Maybe for IE?
-          return false;
-        }
-      };
-      board.ondragover = function(e) {
-        // TODO: Check data type.
-        // TODO: Check that it's not the original section.
-        if (closestWithClass(e.target, 'section')) {
-          e.preventDefault();
-        }
-      };
-      board.ondragleave = function(e) {
-        // FF is raising this event on text nodes so only check elements.
-        if (e.target.nodeType === 1) {
-          // dragleave for outer elements can trigger after dragenter for inner elements
-          // so make sure we're really leaving by checking what we just entered.
-          // relatedTarget is missing in WebKit: https://bugs.webkit.org/show_bug.cgi?id=66547
-          var section = closestWithClass(e.target, 'section');
-          if (section && !section.contains(lastEntered)) {
-            section.classList.remove('droppable');
-          }
-        }
-        lastEntered = null; // No need to keep this around.
-      };
-      board.ondrop = function(e) {
-        var section = closestWithClass(e.target, 'section');
-        var id = e.dataTransfer.getData('card');
-        if (id) {
-          var card = document.getElementById(id);
-          // Might be a card from another window.
-          if (card) {
-            if (section !== card.parentNode) {
-              section.appendChild(card);
-            }
-          } else {
-            alert('couldn\'t find card #' + id);
-          }
-        }
-        section.classList.remove('droppable');
-        e.preventDefault();
-      };
-      function closestWithClass(target, className) {
-        while (target) {
-          if (target.nodeType === 1 &&
-              target.classList.contains(className)) {
-            return target;
-          }
-          target = target.parentNode;
-        }
-        return null;
-      }
-    </script>
+    <!-- Popper -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
+
+    <!-- Latest compiled and minified Bootstrap JavaScript -->
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
+
   </body>
 </html>]]></template>
     </sp_widget>
