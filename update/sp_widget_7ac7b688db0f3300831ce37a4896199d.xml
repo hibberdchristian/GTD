@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?><record_update table="sp_widget">
     <sp_widget action="INSERT_OR_UPDATE">
         <category>custom</category>
-        <client_script><![CDATA[function($uibModal,$scope,$rootScope) {
+        <client_script><![CDATA[function($scope,$rootScope,$uibModal,spUtil) {
 	/* widget controller */
 	var c = this;
 
@@ -12,7 +12,17 @@
 		}).then(function(r) {
 			c.data.title = r.data.task.title;
 			c.data.description = r.data.task.description;
+			c.data.category = r.data.task.category;
+			c.data.assigned_to = r.data.task.assigned_to;
+			c.data.assigned_to_id = r.data.task.assigned_to_id;
+			c.data.priority = r.data.task.priority;
 			c.data.taskID = r.data.task.sys_id;
+		}).then(function() {
+			$scope.user = {
+				displayValue: c.data.assigned_to,
+				value: c.data.assigned_to_id,
+				name: 'user'
+			};
 		}).then(function() {
 			c.modalInstance = $uibModal.open({
 				templateUrl: 'modalTemplate',
@@ -31,9 +41,14 @@
 		});
 	}
 
-	c.closeModal = function() {
-		c.modalInstance.close();
-	}
+	$scope.$on("field.change", function(evt, parms) {
+		if (parms.field.name == 'user')
+			c.data.setUser = parms.newValue;
+
+		c.server.update().then(function(response) {
+			spUtil.update($scope);
+		})
+	});
 
 }]]></client_script>
         <controller_as>c</controller_as>
@@ -59,7 +74,9 @@
 		if (task.get(input.taskID)) {
 			if (input.action == 'getTask') {
 				data.task = {};
-				$sp.getRecordValues(data.task, task, "title, description, sys_id");
+				$sp.getRecordDisplayValues(data.task, task, "title,category,assigned_to,description,sys_id");
+				data.task.priority = task.getValue('priority');
+				data.task.assigned_to_id = task.getValue('assigned_to');
 			}
 			else if (input.action == 'updateTask') { 
 				task.title = input.taskTitle; 
@@ -74,71 +91,58 @@
         <sys_created_by>admin</sys_created_by>
         <sys_created_on>2019-07-30 07:18:41</sys_created_on>
         <sys_id>7ac7b688db0f3300831ce37a4896199d</sys_id>
-        <sys_mod_count>20</sys_mod_count>
+        <sys_mod_count>71</sys_mod_count>
         <sys_name>Edit Task Model</sys_name>
         <sys_package display_value="GTD" source="x_380098_gtd">f8b6f91fdb663300506da08a489619bc</sys_package>
         <sys_policy/>
         <sys_scope display_value="GTD">f8b6f91fdb663300506da08a489619bc</sys_scope>
         <sys_update_name>sp_widget_7ac7b688db0f3300831ce37a4896199d</sys_update_name>
         <sys_updated_by>admin</sys_updated_by>
-        <sys_updated_on>2019-07-30 10:16:10</sys_updated_on>
-        <template><![CDATA[<head>
-
-  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
-
-</head>
-<body>
+        <sys_updated_on>2019-07-31 09:20:58</sys_updated_on>
+        <template><![CDATA[<script type="text/ng-template" id="modalTemplate">
 
 
-  <div class="panel panel-default" ng-show="c.data.taskID">
-    <div class="panel-heading clearfix">
-      <div class="row">
-        <div class="col-md-12">
-          <input class="form-control" id="task-title" ng-model="c.data.title" ng-change="c.updateTask('title')" ng-model-options="{debounce: 1000}"/>
-        </div>
-      </div>
-    </div>
-    <div class="panel-body">
-      <textarea class="form-control" id="task-description" ng-model="c.data.description" ng-change="c.updateTask('description')" ng-model-options="{debounce: 1000}"></textarea>
-    </div>
-  </div>
 
-
-<script type="text/ng-template" id="modalTemplate">
 <div class="panel panel-default">
-<div class="panel-heading">
-<h4 class="panel-title">Modal Window</h4>
+  <div class="panel-heading clearfix">
+    <h4 class="panel-title">Task Update</h4>
+  </div>
+  <div class="panel-body wrapper-xl">
+    <form>
+      
+      <div class="row">
+        <div class="form-group col-xs-4">
+          <label for="taskAssignedTo">Assigned To</label>
+        	<sn-record-picker field="user" table="'sys_user'" display-field="'name'" value-field="'sys_id'" search-fields="'name'" page-size="100" ></sn-record-picker>
+        </div>
+        <div class="form-group col-xs-4">
+          <label for="taskPriority">Priority</label>
+          <select type="text" class="form-control" id="taskPriority" ng-model="c.data.priority">
+            <option>1</option>
+            <option>2</option>
+            <option>3</option>
+          </select>
+        </div>
+        <div class="form-group col-xs-4">
+        <label for="taskCategory">Category</label>
+        <input type="text" class="form-control" id="taskCategory" ng-model="c.data.category"/>
+      </div>
+      </div>
+      <div class="form-group">
+        <label for="taskTitle">Task</label>
+        <input type="text" class="form-control" id="taskTitle" ng-model="c.data.title"/>
+      </div>
+      <div class="form-group">
+        <label for="taskDescription">Description</label>
+        <input type="text" class="form-control" id="taskDescription" ng-model="c.data.description"/>
+      </div>
+      
+    </form>
+  </div>
+  <div class="panel-footer text-right">
+    <button class="btn btn-primary" ng-click="...">Update</button>
+  </div>
 </div>
-<div class="panel-body wrapper-xl">
-{{c.data.description}}
-</div>
-<div class="panel-footer text-right">
-<button class="btn btn-primary" ng-click="c.closeModal()">I'm Done!</button>
-</div>
-</div>
-</script>
-</body>
-
- <script type="text/ng-template" id="modalTemplate">
-  <div class="modal" tabindex="-1" role="dialog">
-    <div class="modal-dialog" role="document">
-      <div class="modal-content">
-        <div class="modal-header">
-          <h5 class="modal-title">Modal title</h5>
-          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-            <span aria-hidden="true">&times;</span>
-    </button>
-    </div>
-        <div class="modal-body">
-          <p>Modal body text goes here.</p>
-    </div>
-        <div class="modal-footer">
-          <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-          <button type="button" class="btn btn-primary">Save changes</button>
-    </div>
-    </div>
-    </div>
-    </div>
 </script>]]></template>
     </sp_widget>
 </record_update>
