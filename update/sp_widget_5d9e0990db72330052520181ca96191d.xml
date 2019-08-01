@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?><record_update table="sp_widget">
     <sp_widget action="INSERT_OR_UPDATE">
         <category>custom</category>
-        <client_script><![CDATA[function($rootScope,$scope) {
+        <client_script><![CDATA[function($rootScope,$scope,spModal) {
 	/* widget controller */
 	var c = this;
 	c.selectItem = function(sysId) {
@@ -11,12 +11,40 @@
 		$rootScope.$emit('selectTask', id);
 	}
 
-}
+	c.newItem = function() {
+		console.log('New Task');
+		$rootScope.$emit('newTask');
+	}
 
-]]></client_script>
+	c.newCategory = function() {
+		console.log('New Category');
+		$rootScope.$emit('newCategory');
+	}
+
+	c.completeTask = function(sysId) {
+		spModal.confirm("Are you sure you want to mark this task as complete?").then(function(confirmed){
+			if(confirmed){
+				var id = sysId;
+				console.log('Complete Task Id: ' + id);
+				c.server.get({
+					action: 'completeTask',
+					taskID: id
+				}).then(function(){
+						location.reload();
+				});
+			}
+		})
+	}
+
+}]]></client_script>
         <controller_as>c</controller_as>
-        <css>body {
-padding-top: 1em;
+        <css>.icons {
+	text-align: right;
+}
+.button {
+  padding-top: 15px;
+  padding-bottom: 15px;
+  text-align: center;
 }	
 .card {
   border-radius: 10px;
@@ -35,6 +63,10 @@ padding-top: 1em;
   padding: 10px;
   margin: 5px;
   background-color: #f7f7f9;
+}
+.badge {
+  background-color: #5bc0de;
+  border-color: #46b8da;
 }</css>
         <data_table>sp_instance</data_table>
         <demo_data/>
@@ -64,49 +96,92 @@ padding-top: 1em;
 		//use service portal helper method to get some display values
 		$sp.getRecordDisplayValues(taskObj, taskGR, 'title,category,assigned_to,sys_id');
 		//get the first 20 characters of the description
-		taskObj.description = taskGR.getValue('description').slice(0,50);
+		taskObj.description = taskGR.getValue('description').slice(0,400);
 		taskObj.priority = taskGR.getValue('priority');
 		//push the populated obj into the array
 		data.tasks.push(taskObj);
-		if(data.categories.indexOf(taskGR.getDisplayValue('category')) == -1) {
-			data.categories.push(taskGR.getDisplayValue('category'));
-		}
+//		if(data.categories.indexOf(taskGR.getDisplayValue('category')) == -1) {
+//			data.categories.push(taskGR.getDisplayValue('category'));
+//		}
 	}
+	var categoryGR = new GlideRecord('sys_choice');
+	categoryGR.addQuery('name','x_380098_gtd_tasks');
+	categoryGR.addQuery('element','category');
+	categoryGR.orderBy('sys_created_on');
+	categoryGR.query();
+	while (categoryGR.next()) {
+		data.categories.push(categoryGR.getValue('label'));
+	}
+	
+	if (input) {
+		var taskUpdate = new GlideRecord('x_380098_gtd_tasks');
+		if (taskUpdate.get(input.taskID)) {
+			if (input.action == 'completeTask') {
+				taskUpdate.state = '1';
+				taskUpdate.update(); 
+			}
+		}
+
+	}
+	
 })();]]></script>
         <servicenow>false</servicenow>
         <sys_class_name>sp_widget</sys_class_name>
         <sys_created_by>admin</sys_created_by>
         <sys_created_on>2019-07-18 08:01:47</sys_created_on>
         <sys_id>5d9e0990db72330052520181ca96191d</sys_id>
-        <sys_mod_count>160</sys_mod_count>
+        <sys_mod_count>226</sys_mod_count>
         <sys_name>Kanban Board</sys_name>
         <sys_package display_value="GTD" source="x_380098_gtd">f8b6f91fdb663300506da08a489619bc</sys_package>
         <sys_policy/>
         <sys_scope display_value="GTD">f8b6f91fdb663300506da08a489619bc</sys_scope>
         <sys_update_name>sp_widget_5d9e0990db72330052520181ca96191d</sys_update_name>
         <sys_updated_by>admin</sys_updated_by>
-        <sys_updated_on>2019-07-31 05:55:37</sys_updated_on>
+        <sys_updated_on>2019-08-01 10:09:00</sys_updated_on>
         <template><![CDATA[<!DOCTYPE html>
 <html lang="en">
   <body>
     <div class="container-fluid">
       <div class="row">
 
-          <div class="swimlane" ng-repeat="category in data.categories">
-            <h1 class="text-center">{{category}}</h1>
+          <div class="swimlane col-xs-3" ng-repeat="category in data.categories">
+            <div class="icons">
+              <a href="#">
+              	<span class="glyphicon glyphicon-remove" aria-hidden="true"></span>
+              </a>
+            </div>
+            
+            <h2 class="text-center">{{category}}</h2>
 
             <div class="container-fluid" ng-repeat="task in data.tasks | filter: category">
 
               <div class="card">
-                <h4 ng-click="c.selectItem(task.sys_id)"><span class="btn btn-info btn-xs">P{{task.priority}}</span> {{task.title}}</h4>
-                <strong>{{task.assigned_to}}</strong>
+                
+                <span class="badge">P{{task.priority}}</span>
+                <a href="#">
+                  <h5 ng-click="c.selectItem(task.sys_id)">{{task.title}}</h5>
+                </a>
+                <h5><strong>{{task.assigned_to}}</strong></h5>
                 <p>{{task.description}}</p>
+                
+                <div class="icons">
+                	<a href="#">
+                  	<span class="glyphicon glyphicon-check" ng-click="c.completeTask(task.sys_id)" aria-hidden="true"></span>
+                  </a>
+                </div>
+                
               </div>
 
             </div>
 
           </div>  
 
+      </div>
+      <div class="row button">
+        <div class="btn-group" role="group">
+          <button type="button" class="btn btn-default" ng-click="c.newItem()">New Task</button>
+          <button type="button" class="btn btn-default" ng-click="c.newCategory()">New Category</button>
+        </div>
       </div>
     </div>
   </body>

@@ -6,47 +6,43 @@
 	var c = this;
 
 	/* pickup the sys_id from the selected item on the board */
-	$rootScope.$on('selectTask', function(event,data) {
-		c.server.get({
-			/* call the server to get the record data */
-			action: 'getTask',
-			taskID: $rootScope.taskID
-		}).then(function(r) {
-			/* assigned the record values to c.data object */
-			c.data.title = r.data.task.title;
-			c.data.description = r.data.task.description;
-			c.data.category = r.data.task.category;
-			c.data.assigned_to = r.data.task.assigned_to;
-			c.data.priority = r.data.task.priority;
-			c.data.taskID = r.data.task.sys_id;
-			console.log(c.data)
-		}).then(function() {
-			$scope.user = {
-				/* user object for the sn-record-picker */
-				displayValue: c.data.assigned_to.name,
-				value: c.data.assigned_to.sys_id,
-				name: 'user'
-			};
-			$scope.category = {
-				/* category object for the sn-record-picker */
-				displayValue: c.data.category.name,
-				value: c.data.category.value,
-				name: 'category'
-			}
-		}).then(function() {
-			/* open the Modal */
-			c.modalInstance = $uibModal.open({
-				templateUrl: 'editTaskModal',
-				scope: $scope
-			});
+	$rootScope.$on('newTask', function(event,data) {
+		console.log('New Task Request Received');
+		c.openModal();
+	})
+	
+	c.openModal = function() {
+		c.data.assigned_to = {
+			name: '',
+			sys_id: ''
+		};
+		c.data.category = {
+			name: '',
+			value: ''
+		};
+		$scope.user = {
+			/* user object for the sn-record-picker */
+			displayValue: c.data.assigned_to.name,
+			value: c.data.assigned_to.sys_id,
+			name: 'user'
+		};
+		$scope.category = {
+			/* category object for the sn-record-picker */
+			displayValue: c.data.category.name,
+			value: c.data.category.value,
+			name: 'category'
+		};
+		/* open the model */
+		c.modalInstance = $uibModal.open({
+			templateUrl: 'newTaskModal',
+			scope: $scope
 		});
-	});
+	};
 
 	/* updates to original record from the modal and re-loads the page */
-	c.updateTask = function() {
+	c.createTask = function() {
 		c.server.get({
-			action: 'updateTask',
-			taskID: c.data.taskID,
+			action: 'createTask',
 			taskDescription: c.data.description,
 			taskCategory: $scope.category.value,
 			taskPriority: c.data.priority,
@@ -56,7 +52,7 @@
 			c.modalInstance.close();
 			location.reload();
 		});
-	}
+	};
 
 	/* controls the sn-record-pickers */
 	$scope.$on("field.change", function(evt, parms) {
@@ -65,7 +61,7 @@
 
 		c.server.update().then(function(response) {
 			spUtil.update($scope);
-		})
+		});
 	});
 
 }]]></client_script>
@@ -77,63 +73,48 @@
         <docs/>
         <field_list/>
         <has_preview>false</has_preview>
-        <id>edit_task_modal</id>
+        <id>new_task_modal</id>
         <internal>false</internal>
         <link><![CDATA[function link(scope, element, attrs, controller) {  }]]></link>
-        <name>Edit Task Modal</name>
+        <name>New Task Modal</name>
         <option_schema/>
         <public>false</public>
         <roles/>
         <script><![CDATA[(function() {
 	/* populate the 'data' object */
 
-	if (input && input.taskID) {
+	if (input) {
 		var task = new GlideRecord('x_380098_gtd_tasks');
-		/* gets the selected task data from the server */
-		if (task.get(input.taskID)) {
-			if (input.action == 'getTask') {
-				data.task = {};
-				$sp.getRecordDisplayValues(data.task, task, "title,description,sys_id");
-				data.task.priority = task.getValue('priority');
-				data.task.assigned_to = {
-					name: task.getDisplayValue('assigned_to'),
-					sys_id: task.getValue('assigned_to')
-				}
-				data.task.category = {
-					name: task.getDisplayValue('category'),
-					value: task.getValue('category')
-				}
-			}
-			/* updates the selected task data */
-			else if (input.action == 'updateTask') { 
-				task.title = input.taskTitle; 
-				task.description = input.taskDescription; 
-				task.category = input.taskCategory;
-				task.priority = input.taskPriority;
-				task.assigned_to = input.taskAssignedTo;
-				task.update(); 
-			}
+		if (input.action == 'createTask') {
+			task.initialize();
+			task.title = input.taskTitle; 
+			task.description = input.taskDescription; 
+			task.category = input.taskCategory;
+			task.priority = input.taskPriority;
+			task.assigned_to = input.taskAssignedTo;
+			task.insert(); 
 		}
 	}
+
 })();]]></script>
         <servicenow>false</servicenow>
         <sys_class_name>sp_widget</sys_class_name>
         <sys_created_by>admin</sys_created_by>
-        <sys_created_on>2019-07-30 07:18:41</sys_created_on>
-        <sys_id>7ac7b688db0f3300831ce37a4896199d</sys_id>
-        <sys_mod_count>109</sys_mod_count>
-        <sys_name>Edit Task Modal</sys_name>
+        <sys_created_on>2019-08-01 06:21:24</sys_created_on>
+        <sys_id>dfdd38f8db433300831ce37a48961945</sys_id>
+        <sys_mod_count>15</sys_mod_count>
+        <sys_name>New Task Modal</sys_name>
         <sys_package display_value="GTD" source="x_380098_gtd">f8b6f91fdb663300506da08a489619bc</sys_package>
         <sys_policy/>
         <sys_scope display_value="GTD">f8b6f91fdb663300506da08a489619bc</sys_scope>
-        <sys_update_name>sp_widget_7ac7b688db0f3300831ce37a4896199d</sys_update_name>
+        <sys_update_name>sp_widget_dfdd38f8db433300831ce37a48961945</sys_update_name>
         <sys_updated_by>admin</sys_updated_by>
-        <sys_updated_on>2019-08-01 07:33:15</sys_updated_on>
-        <template><![CDATA[<script type="text/ng-template" id="editTaskModal">
+        <sys_updated_on>2019-08-01 09:01:13</sys_updated_on>
+        <template><![CDATA[<script type="text/ng-template" id="newTaskModal">
 
 <div class="panel panel-default">
   <div class="panel-heading clearfix">
-    <h4 class="panel-title">Edit Task</h4>
+    <h4 class="panel-title">New Task</h4>
   </div>
   <div class="panel-body wrapper-xl">
     <form>
@@ -168,7 +149,7 @@
     </form>
   </div>
   <div class="panel-footer text-right">
-    <button class="btn btn-primary" ng-click="c.updateTask()">Save</button>
+    <button class="btn btn-primary" ng-click="c.createTask()">Save</button>
   </div>
 </div>
 

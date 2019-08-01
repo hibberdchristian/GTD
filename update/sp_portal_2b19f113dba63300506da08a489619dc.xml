@@ -22,7 +22,7 @@ $btn-default-bg: #fff;
 $text-muted: #646567;
 </css_variables>
         <default>false</default>
-        <homepage display_value="gtd_landing_page">5ceb3c94db32330052520181ca961981</homepage>
+        <homepage/>
         <icon/>
         <kb_knowledge_base/>
         <kb_knowledge_page/>

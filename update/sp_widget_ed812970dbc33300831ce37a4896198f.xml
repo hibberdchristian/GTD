@@ -1,0 +1,110 @@
+<?xml version="1.0" encoding="UTF-8"?><record_update table="sp_widget">
+    <sp_widget action="INSERT_OR_UPDATE">
+        <category>custom</category>
+        <client_script><![CDATA[function($scope,$rootScope,$uibModal) {
+	/* widget controller */
+	var c = this;
+
+	/* pickup the sys_id from the selected item on the board */
+	$rootScope.$on('newCategory', function(event,data) {
+		console.log('New Category Request Received');
+		c.openModal();
+	})
+	
+	c.openModal = function() {
+		/* open the model */
+		c.modalInstance = $uibModal.open({
+			templateUrl: 'newCategoryModal',
+			scope: $scope
+		});
+	};
+
+	/* updates to original record from the modal and re-loads the page */
+	c.createCategory = function() {
+		c.server.get({
+			action: 'createCategory',
+			categoryName: c.data.category
+		}).then(function(r) {
+			c.modalInstance.close();
+			location.reload();
+		});
+	};
+
+}]]></client_script>
+        <controller_as>c</controller_as>
+        <css/>
+        <data_table>sp_instance</data_table>
+        <demo_data/>
+        <description/>
+        <docs/>
+        <field_list/>
+        <has_preview>false</has_preview>
+        <id>new_category_modal</id>
+        <internal>false</internal>
+        <link><![CDATA[function link(scope, element, attrs, controller) {  }]]></link>
+        <name>New Category Modal</name>
+        <option_schema/>
+        <public>false</public>
+        <roles/>
+        <script><![CDATA[(function() {
+	/* populate the 'data' object */
+
+	if (input) {
+		var category = new GlideRecord('sys_choice');
+		if (input.action == 'createCategory') {
+			var count = new GlideAggregate('sys_choice');
+			count.addQuery('name','x_380098_gtd_tasks');
+			count.addQuery('element','true');
+			count.addAggregate('COUNT')
+			count.query();
+			var category_count = 0
+			if(count.next()) {
+				category_count = count.getAggregate('COUNT');
+			}
+			category.initialize();
+			category.name = 'x_380098_gtd_tasks';
+			category.element = 'category';
+			category.label = input.categoryName; 
+			category.value = category_count + 1;
+			category.insert(); 
+		}
+	}
+
+})();]]></script>
+        <servicenow>false</servicenow>
+        <sys_class_name>sp_widget</sys_class_name>
+        <sys_created_by>admin</sys_created_by>
+        <sys_created_on>2019-08-01 08:57:12</sys_created_on>
+        <sys_id>ed812970dbc33300831ce37a4896198f</sys_id>
+        <sys_mod_count>6</sys_mod_count>
+        <sys_name>New Category Modal</sys_name>
+        <sys_package display_value="GTD" source="x_380098_gtd">f8b6f91fdb663300506da08a489619bc</sys_package>
+        <sys_policy/>
+        <sys_scope display_value="GTD">f8b6f91fdb663300506da08a489619bc</sys_scope>
+        <sys_update_name>sp_widget_ed812970dbc33300831ce37a4896198f</sys_update_name>
+        <sys_updated_by>admin</sys_updated_by>
+        <sys_updated_on>2019-08-01 09:51:35</sys_updated_on>
+        <template><![CDATA[<script type="text/ng-template" id="newCategoryModal">
+
+<div class="panel panel-default">
+  <div class="panel-heading clearfix">
+    <h4 class="panel-title">New Category</h4>
+  </div>
+  <div class="panel-body wrapper-xl">
+    <form>
+
+      <div class="form-group">
+        <label for="CategoryName">Description</label>
+        <input type="text" class="form-control" id="CategoryName" ng-model="c.data.category"/>
+      </div>
+      
+    </form>
+  </div>
+  <div class="panel-footer text-right">
+    <button class="btn btn-primary" ng-click="c.createCategory()">Save</button>
+  </div>
+</div>
+
+</script>]]></template>
+    </sp_widget>
+</record_update>
