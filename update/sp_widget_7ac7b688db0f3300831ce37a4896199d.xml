@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?><record_update table="sp_widget">
     <sp_widget action="INSERT_OR_UPDATE">
         <category>custom</category>
-        <client_script><![CDATA[function($scope,$rootScope,$uibModal,spUtil) {
+        <client_script><![CDATA[function($scope,$rootScope,$uibModal,spUtil,spModal) {
 	/* widget controller */
 	var c = this;
 
@@ -44,7 +44,7 @@
 
 	/* updates to original record from the modal and re-loads the page */
 	c.updateTask = function() {
-		c.server.get({
+		var updateTask = {
 			action: 'updateTask',
 			taskID: c.data.taskID,
 			taskDescription: c.data.description,
@@ -52,7 +52,14 @@
 			taskPriority: c.data.priority,
 			taskAssignedTo: $scope.user.value,
 			taskTitle: c.data.title
-		}).then(function(r) {
+		}
+		for (var key in updateTask) {
+			if (updateTask[key] == null || updateTask[key] == "") {
+				spModal.alert("Please complete all fields")
+				return;
+			}
+		}
+		c.server.get(updateTask).then(function(r) {
 			c.modalInstance.close();
 			location.reload();
 		});
@@ -121,14 +128,14 @@
         <sys_created_by>admin</sys_created_by>
         <sys_created_on>2019-07-30 07:18:41</sys_created_on>
         <sys_id>7ac7b688db0f3300831ce37a4896199d</sys_id>
-        <sys_mod_count>109</sys_mod_count>
+        <sys_mod_count>110</sys_mod_count>
         <sys_name>Edit Task Modal</sys_name>
         <sys_package display_value="GTD" source="x_380098_gtd">f8b6f91fdb663300506da08a489619bc</sys_package>
         <sys_policy/>
         <sys_scope display_value="GTD">f8b6f91fdb663300506da08a489619bc</sys_scope>
         <sys_update_name>sp_widget_7ac7b688db0f3300831ce37a4896199d</sys_update_name>
         <sys_updated_by>admin</sys_updated_by>
-        <sys_updated_on>2019-08-01 07:33:15</sys_updated_on>
+        <sys_updated_on>2019-08-02 07:25:10</sys_updated_on>
         <template><![CDATA[<script type="text/ng-template" id="editTaskModal">
 
 <div class="panel panel-default">
