@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?><record_update table="sp_instance">
+    <sp_instance action="INSERT_OR_UPDATE">
+        <active>true</active>
+        <class_name/>
+        <color>default</color>
+        <css/>
+        <glyph/>
+        <id/>
+        <order>1</order>
+        <roles/>
+        <short_description/>
+        <size>md</size>
+        <sp_column display_value="2">cc7eb99adb033300831ce37a4896193c</sp_column>
+        <sp_widget display_value="HTML">8679ef89cb21120000f8d856634c9c4f</sp_widget>
+        <sys_class_name>sp_instance</sys_class_name>
+        <sys_created_by>admin</sys_created_by>
+        <sys_created_on>2019-08-06 02:50:45</sys_created_on>
+        <sys_id>9e9d31dadb033300831ce37a48961949</sys_id>
+        <sys_mod_count>6</sys_mod_count>
+        <sys_name/>
+        <sys_package display_value="GTD" source="x_380098_gtd">f8b6f91fdb663300506da08a489619bc</sys_package>
+        <sys_policy/>
+        <sys_scope display_value="GTD">f8b6f91fdb663300506da08a489619bc</sys_scope>
+        <sys_update_name>sp_instance_9e9d31dadb033300831ce37a48961949</sys_update_name>
+        <sys_updated_by>admin</sys_updated_by>
+        <sys_updated_on>2019-08-06 03:38:34</sys_updated_on>
+        <title/>
+        <url/>
+        <widget_parameters><![CDATA[{
+	"html": {
+		"value": "<h2 style=\"text-align: right;\" data-mce-style=\"text-align: right;\">Getting Things Done</h2><p style=\"text-align: right;\" data-mce-style=\"text-align: right;\">Getting Things Done is an application which will redefine how you approach task management.</p><p style=\"text-align: right;\" data-mce-style=\"text-align: right;\">By following five clear steps, users can apply order to chaos:</p><p style=\"text-align: right;\" data-mce-style=\"text-align: right;\">______________________</p><p style=\"text-align: right;\" data-mce-style=\"text-align: right;\">1. Capture 100% of everything that has your attention</p><p style=\"text-align: right;\" data-mce-style=\"text-align: right;\">2. For eveything you capture, do it now, delegate it, or defer it</p><p style=\"text-align: right;\" data-mce-style=\"text-align: right;\">3. Ensure everything is categorized, prioritized and recorded</p><p style=\"text-align: right;\" data-mce-style=\"text-align: right;\">4. Review your tasks regularly and update where required</p><p style=\"text-align: right;\" data-mce-style=\"text-align: right;\">5. Execute tasks with clarity and confidence</p><p style=\"text-align: right;\" data-mce-style=\"text-align: right;\">______________________</p>",
+		"displayValue": "<h2 style=\"text-align: right;\">Getting Things Done</h2>\n<p style=\"text-align: right;\">Getting Things Done is an application which will redefine how you approach task management.</p>\n<p style=\"text-align: right;\">By following five clear steps, users can apply order to chaos:</p>\n<p style=\"text-align: right;\">______________________</p>\n<p style=\"text-align: right;\">1. Capture 100% of everything that has your attention</p>\n<p style=\"text-align: right;\">2. For eveything you capture, do it now, delegate it, or defer it</p>\n<p style=\"text-align: right;\">3. Ensure everything is categorized, prioritized and recorded</p>\n<p style=\"text-align: right;\">4. Review your tasks regularly and update where required</p>\n<p style=\"text-align: right;\">5. Execute tasks with clarity and confidence</p>\n<p style=\"text-align: right;\">______________________</p>"
+	}
+}]]></widget_parameters>
+    </sp_instance>
+    <sys_translated_text action="delete_multiple" query="documentkey=9e9d31dadb033300831ce37a48961949"/>
+</record_update>

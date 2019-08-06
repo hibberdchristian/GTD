@@ -36,21 +36,22 @@
 		})
 	}
 	
-	c.deleteCategory = function(sysId) {
-		spModal.confirm("Are you sure you want to delete this category?").then(function(confirmed){
+	c.deleteCategory = function(sysId,value) {
+		spModal.confirm("Are you sure you want to delete this category? Any open tasks in this category will be moved to General.").then(function(confirmed){
 			if(confirmed){
 				var id = sysId;
 				console.log('Remove Category Id: ' + id);
 				c.server.get({
 					action: 'deleteCategory',
-					categoryID: id
+					categoryID: id,
+					categoryValue: value
 				}).then(function(){
-						location.reload();
+					location.reload();
 				});
 			}
 		})
 	}
-	
+
 	c.allowDrop = function(ev) {
 		ev.preventDefault();
 	}
@@ -61,21 +62,17 @@
 	
 	c.drop = function(ev) {
 		ev.preventDefault();
+		if (!ev.target.getAttribute("ondrop")) {
+			return false;
+		}
 		var data = ev.dataTransfer.getData("text");
 		ev.target.appendChild(document.getElementById(data));
-		console.log(data);
-		console.log(ev.target.id);
 		
-		var ga = new GlideAjax('kanbanAJAX');
-		ga.addParam('sysparm_name','updateCategory');
-		ga.addParam('sysparm_task',data);
-		ga.addParam('sysparm_category',ev.target.id);
-		ga.getXML(callback);
-		
-		function callback(response) {
-			var answer = response.responseXML.documentElement.getAttribute("answer");
-			console.log("answer");
-		}
+		c.server.get({
+			action: 'moveTask',
+			taskID: data,
+			hostID: ev.target.id
+		})
 	}
 
 }]]></client_script>
@@ -131,7 +128,6 @@
 	//create an array to populate without tasks
 	data.tasks = [];
 	data.categories = [];
-	data.util_categories = [];
 
 	var categoryGR = new GlideRecord('sys_choice');
 	categoryGR.addQuery('name','x_380098_gtd_tasks');
@@ -140,7 +136,8 @@
 	categoryGR.query();
 	while (categoryGR.next()) {
 		var categoryObj = {}
-		categoryObj.label = categoryGR.getValue('label')
+		categoryObj.label = categoryGR.getValue('label');
+		categoryObj.value = categoryGR.getValue('value');
 		categoryObj.sys_id = categoryGR.getUniqueValue();
 		data.categories.push(categoryObj);
 	}
@@ -160,38 +157,34 @@
 		taskObj.priority = taskGR.getValue('priority');
 		//push the populated obj into the array
 		data.tasks.push(taskObj);
-		data.util_categories.push(taskGR.getDisplayValue('category'));
 	}
 
 	if (input) {
 		var taskUpdate = new GlideRecord('x_380098_gtd_tasks');
+		var taskBulkUpdate = new GlideRecord('x_380098_gtd_tasks');
 		var categoryUpdate = new GlideRecord('sys_choice');
 		if (taskUpdate.get(input.taskID)) {
 			if (input.action == 'completeTask') {
 				taskUpdate.state = '1';
 				taskUpdate.update(); 
 			}
+			else if (input.action == 'moveTask') {
+				taskUpdate.category = input.hostID;
+				taskUpdate.update();
+			}
 		}
 		else if (categoryUpdate.get(input.categoryID)) {
 			if (input.action == 'deleteCategory') {
+				console.log(input);
 				categoryUpdate.deleteRecord();
+				taskBulkUpdate.addEncodedQuery(queryString);
+				taskBulkUpdate.addQuery('category',input.categoryValue);
+				taskBulkUpdate.query();
+				taskBulkUpdate.setValue('category','0.0');
+				taskBulkUpdate.updateMultiple();
 			}
 		}
 	}
-	
-	var kanbanAJAX = Class.create();
-	kanbanAJAX.prototype = Object.extendsObject(global.AbstractAjaxProcessor, {
-		
-		updateCategory: function() {
-			
-			console.log("From the server!");
-			var task = this.getParameter('sysparm_task');
-			var category = this.getParameter('sysparm_category');
-			return 'done!';
-		
-		}
-		
-	})
 
 })();]]></script>
         <servicenow>false</servicenow>
@@ -199,14 +192,14 @@
         <sys_created_by>admin</sys_created_by>
         <sys_created_on>2019-07-18 08:01:47</sys_created_on>
         <sys_id>5d9e0990db72330052520181ca96191d</sys_id>
-        <sys_mod_count>317</sys_mod_count>
+        <sys_mod_count>350</sys_mod_count>
         <sys_name>Kanban Board</sys_name>
         <sys_package display_value="GTD" source="x_380098_gtd">f8b6f91fdb663300506da08a489619bc</sys_package>
         <sys_policy/>
         <sys_scope display_value="GTD">f8b6f91fdb663300506da08a489619bc</sys_scope>
         <sys_update_name>sp_widget_5d9e0990db72330052520181ca96191d</sys_update_name>
         <sys_updated_by>admin</sys_updated_by>
-        <sys_updated_on>2019-08-02 09:51:53</sys_updated_on>
+        <sys_updated_on>2019-08-06 06:47:12</sys_updated_on>
         <template><![CDATA[<!DOCTYPE html>
 <html lang="en">
   <body>
@@ -225,10 +218,10 @@
       </div>
       <div class="row">
 
-          <div class="swimlane col-md-2 col-xs-12" ng-repeat="category in data.categories" ondrop="getScope().drop(event)" id="{{category.sys_id}}" ondragover="getScope().allowDrop(event)">
+          <div class="swimlane col-md-2 col-xs-12" ng-repeat="category in data.categories" ondrop="getScope().drop(event)" id="{{category.value}}" ondragover="getScope().allowDrop(event)">
             <div class="icons">
               <a href="#">
-              	<span ng-show="data.util_categories.indexOf(category.label) == -1" ng-click="c.deleteCategory(category.sys_id)" class="glyphicon glyphicon-remove" aria-hidden="true"></span>
+              	<span ng-show="category.label != 'General'" ng-click="c.deleteCategory(category.sys_id,category.value)" class="glyphicon glyphicon-remove" aria-hidden="true"></span>
               </a>
             </div>
             

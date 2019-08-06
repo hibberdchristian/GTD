@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?><record_update table="sp_page">
+    <sp_page action="INSERT_OR_UPDATE">
+        <category>custom</category>
+        <css>body {
+  background-image:url("gtd_landing_page_main.jpg");
+  background-size:cover;
+  color: #FFF;
+}</css>
+        <draft>false</draft>
+        <dynamic_title_structure/>
+        <id>gtd_landing_page</id>
+        <internal>false</internal>
+        <public>false</public>
+        <roles/>
+        <short_description/>
+        <sys_class_name>sp_page</sys_class_name>
+        <sys_created_by>admin</sys_created_by>
+        <sys_created_on>2019-08-06 02:39:10</sys_created_on>
+        <sys_id>6cfab91adb033300831ce37a489619d0</sys_id>
+        <sys_mod_count>5</sys_mod_count>
+        <sys_name>gtd_landing_page</sys_name>
+        <sys_package display_value="GTD" source="x_380098_gtd">f8b6f91fdb663300506da08a489619bc</sys_package>
+        <sys_policy/>
+        <sys_scope display_value="GTD">f8b6f91fdb663300506da08a489619bc</sys_scope>
+        <sys_update_name>sp_page_6cfab91adb033300831ce37a489619d0</sys_update_name>
+        <sys_updated_by>admin</sys_updated_by>
+        <sys_updated_on>2019-08-06 03:36:44</sys_updated_on>
+        <title>GTD Landing Page</title>
+    </sp_page>
+    <sys_translated_text action="delete_multiple" query="documentkey=6cfab91adb033300831ce37a489619d0"/>
+</record_update>
