@@ -24,6 +24,25 @@
             <element>category</element>
             <hint/>
             <inactive>false</inactive>
+            <label>Test</label>
+            <language>en</language>
+            <name>x_380098_gtd_tasks</name>
+            <sequence/>
+            <sys_created_by>admin</sys_created_by>
+            <sys_created_on>2019-08-07 07:05:08</sys_created_on>
+            <sys_domain>global</sys_domain>
+            <sys_domain_path>/</sys_domain_path>
+            <sys_id>5a610432db833300831ce37a48961985</sys_id>
+            <sys_mod_count>0</sys_mod_count>
+            <sys_updated_by>admin</sys_updated_by>
+            <sys_updated_on>2019-08-07 07:05:08</sys_updated_on>
+            <value>10.0</value>
+        </sys_choice>
+        <sys_choice action="INSERT_OR_UPDATE">
+            <dependent_value/>
+            <element>category</element>
+            <hint/>
+            <inactive>false</inactive>
             <label>Learn</label>
             <language>en</language>
             <name>x_380098_gtd_tasks</name>
@@ -56,6 +75,44 @@
             <sys_updated_by>admin</sys_updated_by>
             <sys_updated_on>2019-08-06 06:47:27</sys_updated_on>
             <value>7.0</value>
+        </sys_choice>
+        <sys_choice action="INSERT_OR_UPDATE">
+            <dependent_value/>
+            <element>category</element>
+            <hint/>
+            <inactive>false</inactive>
+            <label>Play</label>
+            <language>en</language>
+            <name>x_380098_gtd_tasks</name>
+            <sequence/>
+            <sys_created_by>admin</sys_created_by>
+            <sys_created_on>2019-08-07 03:09:12</sys_created_on>
+            <sys_domain>global</sys_domain>
+            <sys_domain_path>/</sys_domain_path>
+            <sys_id>d66b0f22db033300831ce37a4896198f</sys_id>
+            <sys_mod_count>0</sys_mod_count>
+            <sys_updated_by>admin</sys_updated_by>
+            <sys_updated_on>2019-08-07 03:09:12</sys_updated_on>
+            <value>8.0</value>
+        </sys_choice>
+        <sys_choice action="INSERT_OR_UPDATE">
+            <dependent_value/>
+            <element>category</element>
+            <hint/>
+            <inactive>false</inactive>
+            <label>Client</label>
+            <language>en</language>
+            <name>x_380098_gtd_tasks</name>
+            <sequence/>
+            <sys_created_by>admin</sys_created_by>
+            <sys_created_on>2019-08-07 08:00:24</sys_created_on>
+            <sys_domain>global</sys_domain>
+            <sys_domain_path>/</sys_domain_path>
+            <sys_id>801e483adb833300831ce37a489619cc</sys_id>
+            <sys_mod_count>0</sys_mod_count>
+            <sys_updated_by>admin</sys_updated_by>
+            <sys_updated_on>2019-08-07 08:00:24</sys_updated_on>
+            <value>9.0</value>
         </sys_choice>
         <sys_choice_set action="INSERT_OR_UPDATE">
             <element>category</element>

@@ -51,6 +51,11 @@
 			}
 		})
 	}
+	
+	c.selectUser = function(user) {
+		console.log(user);
+//		document.getElementById("id").style.opacity = "..."
+	}
 
 	c.allowDrop = function(ev) {
 		ev.preventDefault();
@@ -86,23 +91,29 @@
   text-align: center;
 }	
 .card {
-  border-radius: 10px;
   border: solid;
   border-color: #ddd;
-  border-width: 1px;
-  padding: 10px;
-  margin: 5px;
-  background-color: #fff;
+  border-width: 2px;
+  padding: 0px;
+  margin-bottom: 10px;
+}
+.card-heading {
+	padding: 6px 9px;
+}
+.card-body {
+	padding: 6px 9px;
 }
 .swimlane {
-  border-radius: 10px;
   border: solid;
   border-color: #ddd;
-  border-width: 1px;
-  padding: 10px;
-  margin: 15px;
-  background-color: #f7f7f9;
-  min-height: 500px;
+  border-width: 2px;
+  padding: 2px;
+  margin-bottom: 5px;
+}
+.swimlane-body {
+  overflow-y: scroll;
+  height: 500px;
+  padding: 5px
 }
 .badge {
   background-color: #5bc0de;
@@ -110,6 +121,24 @@
 }
 .row {
 	padding-bottom: 15px;
+}
+.panel-heading {
+  background-color: #00486D;
+  color: #FFFFFF;
+}
+.badge {
+  background-color: #d5dee0;
+}
+.nopadding {
+	padding: 0px;
+}
+@media (hover: hover) {
+  .glyphicon:hover {
+    color: black;
+  }
+  .card-heading:hover {
+    background-color: #858b8c;
+  }
 }</css>
         <data_table>sp_instance</data_table>
         <demo_data/>
@@ -128,6 +157,7 @@
 	//create an array to populate without tasks
 	data.tasks = [];
 	data.categories = [];
+	data.assignees = [];
 
 	var categoryGR = new GlideRecord('sys_choice');
 	categoryGR.addQuery('name','x_380098_gtd_tasks');
@@ -157,6 +187,9 @@
 		taskObj.priority = taskGR.getValue('priority');
 		//push the populated obj into the array
 		data.tasks.push(taskObj);
+		if(data.assignees.indexOf(taskObj.assigned_to) == -1) {
+			data.assignees.push(taskObj.assigned_to);
+		}
 	}
 
 	if (input) {
@@ -192,67 +225,82 @@
         <sys_created_by>admin</sys_created_by>
         <sys_created_on>2019-07-18 08:01:47</sys_created_on>
         <sys_id>5d9e0990db72330052520181ca96191d</sys_id>
-        <sys_mod_count>350</sys_mod_count>
+        <sys_mod_count>483</sys_mod_count>
         <sys_name>Kanban Board</sys_name>
         <sys_package display_value="GTD" source="x_380098_gtd">f8b6f91fdb663300506da08a489619bc</sys_package>
         <sys_policy/>
         <sys_scope display_value="GTD">f8b6f91fdb663300506da08a489619bc</sys_scope>
         <sys_update_name>sp_widget_5d9e0990db72330052520181ca96191d</sys_update_name>
         <sys_updated_by>admin</sys_updated_by>
-        <sys_updated_on>2019-08-06 06:47:12</sys_updated_on>
-        <template><![CDATA[<!DOCTYPE html>
-<html lang="en">
-  <body>
-    <div class="container grid" id="drag-and-drop">
-      <script>
-        //gets the angular scope
-        function getScope() {
-          return angular.element('#drag-and-drop').scope().c;
-        }
-      </script>
-      <div class="row button">
-        <div class="btn-group" role="group">
-          <button type="button" class="btn btn-default" ng-click="c.newItem()">New Task</button>
-          <button type="button" class="btn btn-default" ng-click="c.newCategory()">New Category</button>
-        </div>
+        <sys_updated_on>2019-08-07 09:50:51</sys_updated_on>
+        <template><![CDATA[<div class="container-fluid" id="drag-and-drop">
+
+  <script>
+    //gets the angular scope
+    function getScope() {
+      return angular.element('#drag-and-drop').scope().c;
+    }
+  </script>
+
+  <div class="row button">
+    <div class="btn-group" role="group">
+      <button type="button" class="btn btn-default" ng-click="c.newItem()">New Task</button>
+      <button type="button" class="btn btn-default" ng-click="c.newCategory()">New Category</button>
+    </div>
+    <div class="row button">
+      <div class="btn-group" role="group">
+        <button ng-repeat="assignee in data.assignees" type="button" class="btn btn-primary" ng-click="c.selectUser(assignee)">{{assignee}}</button>
       </div>
-      <div class="row">
+    </div>
+  </div>
 
-          <div class="swimlane col-md-2 col-xs-12" ng-repeat="category in data.categories" ondrop="getScope().drop(event)" id="{{category.value}}" ondragover="getScope().allowDrop(event)">
-            <div class="icons">
-              <a href="#">
-              	<span ng-show="category.label != 'General'" ng-click="c.deleteCategory(category.sys_id,category.value)" class="glyphicon glyphicon-remove" aria-hidden="true"></span>
-              </a>
-            </div>
-            
-            <h2 class="text-center">{{category.label}}</h2>
+  <div class="row grid">
 
-            <div class="container-fluid" ng-repeat="task in data.tasks | filter: {category:category.label}">
+    <div class="col-md-2 col-sm-3 col-xs-12 nopadding" ng-repeat="category in data.categories">
 
-              <div class="card" id="{{task.sys_id}}" draggable="true" ondragstart="getScope().drag(event)">
-                
-                <span class="badge">P{{task.priority}}</span>
-                <a href="#">
-                  <h5 ng-click="c.selectItem(task.sys_id)">{{task.title}}</h5>
-                </a>
-                <h5><strong>{{task.assigned_to}}</strong></h5>
+      <div class="swimlane panel panel-default ">
+
+        <div class="panel-heading text-center">
+          {{category.label}} 
+        </div>
+
+        <div class="swimlane-body panel-body" ondrop="getScope().drop(event)" ondragover="getScope().allowDrop(event)" id="{{category.value}}">
+
+          <div ng-repeat="task in data.tasks | filter: {category:category.label}">
+
+            <div class="card panel panel-default col-xs-12" id="{{task.sys_id}}" draggable="true" ondragstart="getScope().drag(event)">
+
+              <div class="card-heading panel-heading" ng-click="c.selectItem(task.sys_id)">
+                <h5>{{task.title}}</h5>
+              </div>
+
+              <div class="card-body panel-body">
+                <div>
+                  <span class="badge">P{{task.priority}}</span>
+                  <h5><strong>{{task.assigned_to}}</strong></h5>
+                </div>
                 <p>{{task.description}}</p>
-                
                 <div class="icons">
-                	<a href="#">
-                  	<span class="glyphicon glyphicon-check" ng-click="c.completeTask(task.sys_id)" aria-hidden="true"></span>
+                  <a href="#">
+                    <span class="glyphicon glyphicon-check" ng-click="c.completeTask(task.sys_id)" aria-hidden="true"></span>
                   </a>
                 </div>
-                
               </div>
 
             </div>
 
-          </div>  
+          </div>
+        </div>
 
       </div>
-    </div>
-  </body>
-</html>]]></template>
+
+      <div class="row button">
+        <span ng-show="category.label != 'General'" ng-click="c.deleteCategory(category.sys_id,category.value)" class="glyphicon glyphicon-trash" aria-hidden="true"></span>
+      </div>
+
+    </div>  
+
+  </div>
+</div>]]></template>
     </sp_widget>
 </record_update>
