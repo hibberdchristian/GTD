@@ -20,21 +20,6 @@
 		console.log('New Category');
 		$rootScope.$emit('newCategory');
 	}
-
-	c.completeTask = function(sysId) {
-		spModal.confirm("Are you sure you want to mark this task as complete?").then(function(confirmed){
-			if(confirmed){
-				var id = sysId;
-				console.log('Complete Task Id: ' + id);
-				c.server.get({
-					action: 'completeTask',
-					taskID: id
-				}).then(function(){
-						location.reload();
-				});
-			}
-		})
-	}
 	
 	c.deleteCategory = function(sysId,value) {
 		spModal.confirm("Are you sure you want to delete this category? Any open tasks in this category will be moved to General.").then(function(confirmed){
@@ -52,9 +37,43 @@
 		})
 	}
 	
-	c.selectUser = function(user) {
-		console.log(user);
-//		document.getElementById("id").style.opacity = "..."
+	// Function to control fading on tasks on selection of users
+	c.selectUser = function(assignee) {
+		if (document.getElementById(assignee.name).classList.contains("active")) {
+			document.getElementById(assignee.name).classList.remove("active");
+		} else {
+			document.getElementById(assignee.name).classList.add("active");
+		}
+		var activeUsers = [];
+		for (i=0;i<document.getElementById('assignee-buttons').getElementsByClassName('active').length;i++) {
+			activeUsers.push(document.getElementsByClassName('active')[i].id)
+		}
+		for (i=0;i<c.data.tasks.length;i++) {
+			if (activeUsers.indexOf(c.data.tasks[i].assigned_to) != -1 || activeUsers.length == 0) {
+				document.getElementById(c.data.tasks[i].sys_id).style.opacity = 1;
+			} else {
+				document.getElementById(c.data.tasks[i].sys_id).style.opacity = 0.4;
+			}
+		}
+	}
+	
+	c.selectPriority = function(priority) {
+		if (document.getElementById(priority).classList.contains("active")) {
+			document.getElementById(priority).classList.remove("active");
+		} else {
+			document.getElementById(priority).classList.add("active");
+		}
+		var activePriorites = [];
+		for (i=0;i<document.getElementById('priority-buttons').getElementsByClassName('active').length;i++) {
+			activePriorites.push(document.getElementsByClassName('active')[i].id)
+		}
+		for (i=0;i<c.data.tasks.length;i++) {
+			if (activePriorites.indexOf(c.data.tasks[i].priority) != -1 || activePriorites.length == 0) {
+				document.getElementById(c.data.tasks[i].sys_id).getElementsByClassName('badge')[0].classList.add("p" + c.data.tasks[i].priority);
+			} else {
+				document.getElementById(c.data.tasks[i].sys_id).getElementsByClassName('badge')[0].classList.remove("p" + c.data.tasks[i].priority);
+			}
+		}
 	}
 
 	c.allowDrop = function(ev) {
@@ -67,22 +86,52 @@
 	
 	c.drop = function(ev) {
 		ev.preventDefault();
+		var data = ev.dataTransfer.getData("text");		
 		if (!ev.target.getAttribute("ondrop")) {
 			return false;
 		}
-		var data = ev.dataTransfer.getData("text");
-		ev.target.appendChild(document.getElementById(data));
-		
-		c.server.get({
-			action: 'moveTask',
-			taskID: data,
-			hostID: ev.target.id
-		})
+		if(ev.target.id == 'dropzone') {
+			spModal.confirm("Are you sure you want to mark this task as complete?").then(function(confirmed){
+				if(confirmed){
+					c.server.get({
+						action: 'completeTask',
+						taskID: data
+					}).then(function(){
+						location.reload();
+					});
+				}
+			})
+		} else {
+			ev.target.appendChild(document.getElementById(data));
+			c.server.get({
+				action: 'moveTask',
+				taskID: data,
+				hostID: ev.target.id
+			})
+		}
 	}
 
 }]]></client_script>
         <controller_as>c</controller_as>
-        <css>.icons {
+        <css>.badge {
+  background-color: #d5dee0;
+}
+.p1 {
+  color: #fff;
+  background-color: #d9534f;
+  border-color: #d43f3a;
+}
+.p2 {
+  color: #fff;
+  background-color: #f0ad4e;
+  border-color: #eea236;
+}
+.p3 {
+  color: #fff;
+  background-color: #5cb85c;
+  border-color: #4cae4c;
+}
+.icons {
 	text-align: right;
 }
 .button {
@@ -96,9 +145,6 @@
   border-width: 2px;
   padding: 0px;
   margin-bottom: 10px;
-}
-.card-heading {
-	padding: 6px 9px;
 }
 .card-body {
 	padding: 6px 9px;
@@ -115,19 +161,12 @@
   height: 500px;
   padding: 5px
 }
-.badge {
-  background-color: #5bc0de;
-  border-color: #46b8da;
-}
 .row {
 	padding-bottom: 15px;
 }
 .panel-heading {
   background-color: #00486D;
   color: #FFFFFF;
-}
-.badge {
-  background-color: #d5dee0;
 }
 .nopadding {
 	padding: 0px;
@@ -187,8 +226,25 @@
 		taskObj.priority = taskGR.getValue('priority');
 		//push the populated obj into the array
 		data.tasks.push(taskObj);
-		if(data.assignees.indexOf(taskObj.assigned_to) == -1) {
-			data.assignees.push(taskObj.assigned_to);
+	}
+	
+	// populate data.assignees to for use with the assinged_to buttons
+	for (i=0;i<data.tasks.length;i++) {
+		var assigneeObj = {};
+		assigneeObj.name = data.tasks[i].assigned_to;
+		assigneeObj.tasks = [data.tasks[i].sys_id];
+		if(i==0) {
+			data.assignees.push(assigneeObj);
+		} else {
+			for (j=0;j<data.assignees.length;j++) {
+				if (data.tasks[i].assigned_to == data.assignees[j].name) {
+					data.assignees[j].tasks.push(data.tasks[i].sys_id);
+					break;
+				} else {
+					data.assignees.push(assigneeObj);
+					break;
+				}
+			}
 		}
 	}
 
@@ -208,7 +264,6 @@
 		}
 		else if (categoryUpdate.get(input.categoryID)) {
 			if (input.action == 'deleteCategory') {
-				console.log(input);
 				categoryUpdate.deleteRecord();
 				taskBulkUpdate.addEncodedQuery(queryString);
 				taskBulkUpdate.addQuery('category',input.categoryValue);
@@ -225,14 +280,14 @@
         <sys_created_by>admin</sys_created_by>
         <sys_created_on>2019-07-18 08:01:47</sys_created_on>
         <sys_id>5d9e0990db72330052520181ca96191d</sys_id>
-        <sys_mod_count>483</sys_mod_count>
+        <sys_mod_count>624</sys_mod_count>
         <sys_name>Kanban Board</sys_name>
         <sys_package display_value="GTD" source="x_380098_gtd">f8b6f91fdb663300506da08a489619bc</sys_package>
         <sys_policy/>
         <sys_scope display_value="GTD">f8b6f91fdb663300506da08a489619bc</sys_scope>
         <sys_update_name>sp_widget_5d9e0990db72330052520181ca96191d</sys_update_name>
         <sys_updated_by>admin</sys_updated_by>
-        <sys_updated_on>2019-08-07 09:50:51</sys_updated_on>
+        <sys_updated_on>2019-08-08 09:58:31</sys_updated_on>
         <template><![CDATA[<div class="container-fluid" id="drag-and-drop">
 
   <script>
@@ -247,12 +302,25 @@
       <button type="button" class="btn btn-default" ng-click="c.newItem()">New Task</button>
       <button type="button" class="btn btn-default" ng-click="c.newCategory()">New Category</button>
     </div>
-    <div class="row button">
-      <div class="btn-group" role="group">
-        <button ng-repeat="assignee in data.assignees" type="button" class="btn btn-primary" ng-click="c.selectUser(assignee)">{{assignee}}</button>
-      </div>
+  </div>
+
+  <div class="row button">
+    <div class="btn-group" role="group" id="assignee-buttons">
+      <button ng-repeat="assignee in data.assignees" type="button" class="btn btn-default" ng-click="c.selectUser(assignee)" id="{{assignee.name}}">{{assignee.name}}</button>
+    </div>
+
+    <div class="btn-group" role="group" id="priority-buttons">
+      <button type="button" class="btn btn-default" ng-click="c.selectPriority('1')" id="1">P1</button>
+      <button type="button" class="btn btn-default" ng-click="c.selectPriority('2')" id="2">P2</button>
+      <button type="button" class="btn btn-default" ng-click="c.selectPriority('3')" id="3">P3</button>
     </div>
   </div>
+  
+    <div class="panel panel-default">
+      <div class="panel-body text-center text-italic text-muted" id="dropzone" ondrop="getScope().drop(event)" ondragover="getScope().allowDrop(event)">
+          <em>Drag here when done...</em> 
+      </div> 
+    </div>
 
   <div class="row grid">
 
@@ -270,23 +338,13 @@
 
             <div class="card panel panel-default col-xs-12" id="{{task.sys_id}}" draggable="true" ondragstart="getScope().drag(event)">
 
-              <div class="card-heading panel-heading" ng-click="c.selectItem(task.sys_id)">
-                <h5>{{task.title}}</h5>
-              </div>
-
-              <div class="card-body panel-body">
+              <div class="card-body panel-body" ng-click="c.selectItem(task.sys_id)">
                 <div>
-                  <span class="badge">P{{task.priority}}</span>
+                  <span class="badge p{{task.priority}}">P{{task.priority}}</span>
                   <h5><strong>{{task.assigned_to}}</strong></h5>
                 </div>
-                <p>{{task.description}}</p>
-                <div class="icons">
-                  <a href="#">
-                    <span class="glyphicon glyphicon-check" ng-click="c.completeTask(task.sys_id)" aria-hidden="true"></span>
-                  </a>
-                </div>
+                <p>{{task.title}}</p>
               </div>
-
             </div>
 
           </div>

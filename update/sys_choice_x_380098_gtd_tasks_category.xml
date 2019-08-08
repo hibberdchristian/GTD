@@ -8,92 +8,16 @@
             <label>General</label>
             <language>en</language>
             <name>x_380098_gtd_tasks</name>
-            <sequence/>
+            <sequence>0</sequence>
             <sys_created_by>admin</sys_created_by>
             <sys_created_on>2019-07-29 08:54:48</sys_created_on>
             <sys_domain>global</sys_domain>
             <sys_domain_path>/</sys_domain_path>
             <sys_id>ab248e77db723300831ce37a4896192e</sys_id>
-            <sys_mod_count>2</sys_mod_count>
+            <sys_mod_count>8</sys_mod_count>
             <sys_updated_by>admin</sys_updated_by>
-            <sys_updated_on>2019-08-02 07:14:35</sys_updated_on>
-            <value>0.0</value>
-        </sys_choice>
-        <sys_choice action="INSERT_OR_UPDATE">
-            <dependent_value/>
-            <element>category</element>
-            <hint/>
-            <inactive>false</inactive>
-            <label>Test</label>
-            <language>en</language>
-            <name>x_380098_gtd_tasks</name>
-            <sequence/>
-            <sys_created_by>admin</sys_created_by>
-            <sys_created_on>2019-08-07 07:05:08</sys_created_on>
-            <sys_domain>global</sys_domain>
-            <sys_domain_path>/</sys_domain_path>
-            <sys_id>5a610432db833300831ce37a48961985</sys_id>
-            <sys_mod_count>0</sys_mod_count>
-            <sys_updated_by>admin</sys_updated_by>
-            <sys_updated_on>2019-08-07 07:05:08</sys_updated_on>
-            <value>10.0</value>
-        </sys_choice>
-        <sys_choice action="INSERT_OR_UPDATE">
-            <dependent_value/>
-            <element>category</element>
-            <hint/>
-            <inactive>false</inactive>
-            <label>Learn</label>
-            <language>en</language>
-            <name>x_380098_gtd_tasks</name>
-            <sequence/>
-            <sys_created_by>admin</sys_created_by>
-            <sys_created_on>2019-08-06 06:45:43</sys_created_on>
-            <sys_domain>global</sys_domain>
-            <sys_domain_path>/</sys_domain_path>
-            <sys_id>1863bedadb833300831ce37a4896197c</sys_id>
-            <sys_mod_count>0</sys_mod_count>
-            <sys_updated_by>admin</sys_updated_by>
-            <sys_updated_on>2019-08-06 06:45:43</sys_updated_on>
-            <value>6.0</value>
-        </sys_choice>
-        <sys_choice action="INSERT_OR_UPDATE">
-            <dependent_value/>
-            <element>category</element>
-            <hint/>
-            <inactive>false</inactive>
-            <label>Work</label>
-            <language>en</language>
-            <name>x_380098_gtd_tasks</name>
-            <sequence/>
-            <sys_created_by>admin</sys_created_by>
-            <sys_created_on>2019-08-06 06:47:27</sys_created_on>
-            <sys_domain>global</sys_domain>
-            <sys_domain_path>/</sys_domain_path>
-            <sys_id>79c3b21edb833300831ce37a489619b6</sys_id>
-            <sys_mod_count>0</sys_mod_count>
-            <sys_updated_by>admin</sys_updated_by>
-            <sys_updated_on>2019-08-06 06:47:27</sys_updated_on>
-            <value>7.0</value>
-        </sys_choice>
-        <sys_choice action="INSERT_OR_UPDATE">
-            <dependent_value/>
-            <element>category</element>
-            <hint/>
-            <inactive>false</inactive>
-            <label>Play</label>
-            <language>en</language>
-            <name>x_380098_gtd_tasks</name>
-            <sequence/>
-            <sys_created_by>admin</sys_created_by>
-            <sys_created_on>2019-08-07 03:09:12</sys_created_on>
-            <sys_domain>global</sys_domain>
-            <sys_domain_path>/</sys_domain_path>
-            <sys_id>d66b0f22db033300831ce37a4896198f</sys_id>
-            <sys_mod_count>0</sys_mod_count>
-            <sys_updated_by>admin</sys_updated_by>
-            <sys_updated_on>2019-08-07 03:09:12</sys_updated_on>
-            <value>8.0</value>
+            <sys_updated_on>2019-08-08 08:54:50</sys_updated_on>
+            <value>0</value>
         </sys_choice>
         <sys_choice action="INSERT_OR_UPDATE">
             <dependent_value/>
@@ -103,16 +27,92 @@
             <label>Client</label>
             <language>en</language>
             <name>x_380098_gtd_tasks</name>
-            <sequence/>
+            <sequence>20</sequence>
             <sys_created_by>admin</sys_created_by>
             <sys_created_on>2019-08-07 08:00:24</sys_created_on>
             <sys_domain>global</sys_domain>
             <sys_domain_path>/</sys_domain_path>
             <sys_id>801e483adb833300831ce37a489619cc</sys_id>
-            <sys_mod_count>0</sys_mod_count>
+            <sys_mod_count>9</sys_mod_count>
             <sys_updated_by>admin</sys_updated_by>
-            <sys_updated_on>2019-08-07 08:00:24</sys_updated_on>
-            <value>9.0</value>
+            <sys_updated_on>2019-08-08 08:57:36</sys_updated_on>
+            <value>20</value>
+        </sys_choice>
+        <sys_choice action="INSERT_OR_UPDATE">
+            <dependent_value/>
+            <element>category</element>
+            <hint/>
+            <inactive>false</inactive>
+            <label>Learn</label>
+            <language>en</language>
+            <name>x_380098_gtd_tasks</name>
+            <sequence>30</sequence>
+            <sys_created_by>admin</sys_created_by>
+            <sys_created_on>2019-08-08 08:20:03</sys_created_on>
+            <sys_domain>global</sys_domain>
+            <sys_domain_path>/</sys_domain_path>
+            <sys_id>e12cdd83dbcf3300831ce37a4896190e</sys_id>
+            <sys_mod_count>9</sys_mod_count>
+            <sys_updated_by>admin</sys_updated_by>
+            <sys_updated_on>2019-08-08 08:57:40</sys_updated_on>
+            <value>30</value>
+        </sys_choice>
+        <sys_choice action="INSERT_OR_UPDATE">
+            <dependent_value/>
+            <element>category</element>
+            <hint/>
+            <inactive>false</inactive>
+            <label>Play</label>
+            <language>en</language>
+            <name>x_380098_gtd_tasks</name>
+            <sequence>40</sequence>
+            <sys_created_by>admin</sys_created_by>
+            <sys_created_on>2019-08-08 08:36:11</sys_created_on>
+            <sys_domain>global</sys_domain>
+            <sys_domain_path>/</sys_domain_path>
+            <sys_id>86df9587dbcf3300831ce37a48961902</sys_id>
+            <sys_mod_count>7</sys_mod_count>
+            <sys_updated_by>admin</sys_updated_by>
+            <sys_updated_on>2019-08-08 08:57:43</sys_updated_on>
+            <value>40</value>
+        </sys_choice>
+        <sys_choice action="INSERT_OR_UPDATE">
+            <dependent_value/>
+            <element>category</element>
+            <hint/>
+            <inactive>false</inactive>
+            <label>Work</label>
+            <language>en</language>
+            <name>x_380098_gtd_tasks</name>
+            <sequence>50</sequence>
+            <sys_created_by>admin</sys_created_by>
+            <sys_created_on>2019-08-06 06:47:27</sys_created_on>
+            <sys_domain>global</sys_domain>
+            <sys_domain_path>/</sys_domain_path>
+            <sys_id>79c3b21edb833300831ce37a489619b6</sys_id>
+            <sys_mod_count>7</sys_mod_count>
+            <sys_updated_by>admin</sys_updated_by>
+            <sys_updated_on>2019-08-08 08:57:45</sys_updated_on>
+            <value>50</value>
+        </sys_choice>
+        <sys_choice action="INSERT_OR_UPDATE">
+            <dependent_value/>
+            <element>category</element>
+            <hint/>
+            <inactive>false</inactive>
+            <label>Test</label>
+            <language>en</language>
+            <name>x_380098_gtd_tasks</name>
+            <sequence>60</sequence>
+            <sys_created_by>admin</sys_created_by>
+            <sys_created_on>2019-08-07 07:05:08</sys_created_on>
+            <sys_domain>global</sys_domain>
+            <sys_domain_path>/</sys_domain_path>
+            <sys_id>5a610432db833300831ce37a48961985</sys_id>
+            <sys_mod_count>6</sys_mod_count>
+            <sys_updated_by>admin</sys_updated_by>
+            <sys_updated_on>2019-08-08 08:57:46</sys_updated_on>
+            <value>60</value>
         </sys_choice>
         <sys_choice_set action="INSERT_OR_UPDATE">
             <element>category</element>
