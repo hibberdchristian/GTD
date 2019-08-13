@@ -19,6 +19,7 @@
 			c.data.assigned_to = r.data.task.assigned_to;
 			c.data.priority = r.data.task.priority;
 			c.data.taskID = r.data.task.sys_id;
+			c.data.notes = r.data.task.notes;
 			console.log(c.data)
 		}).then(function() {
 			$scope.user = {
@@ -64,6 +65,20 @@
 			location.reload();
 		});
 	}
+	
+	c.updateNotes = function() {
+		var updateNotes = {
+			action: 'updateNotes',
+			taskID: c.data.taskID,
+			noteContent: document.getElementById("note-content").value
+		}
+		if (updateNotes.noteContent == '') {
+			return;
+		}
+		c.server.get(updateNotes).then(function(r) {
+			// How to post the comment without leaving the modal?
+		});
+	}
 
 	/* controls the sn-record-pickers */
 	$scope.$on("field.change", function(evt, parms) {
@@ -96,6 +111,7 @@
 
 	if (input && input.taskID) {
 		var task = new GlideRecord('x_380098_gtd_tasks');
+		var notes = new GlideRecord('sys_journal_field');
 		/* gets the selected task data from the server */
 		if (task.get(input.taskID)) {
 			if (input.action == 'getTask') {
@@ -110,6 +126,14 @@
 					name: task.getDisplayValue('category'),
 					value: task.getValue('category')
 				}
+				data.task.notes = [];
+				notes.addQuery('element_id',input.taskID);
+				notes.query();
+				while (notes.next()) {
+					var note = {};
+					$sp.getRecordDisplayValues(note, notes, "sys_created_by,sys_created_on,value");
+					data.task.notes.push(note);
+				}
 			}
 			/* updates the selected task data */
 			else if (input.action == 'updateTask') { 
@@ -121,6 +145,15 @@
 				task.update(); 
 			}
 		}
+		/* updates the work notes for the task */
+		if (input.action == 'updateNotes') {
+			notes.initialize();
+			notes.element_id = input.taskID;
+			notes.value = input.noteContent;
+			notes.element = 'work_notes';
+			notes.name = 'x_380098_gtd_tasks';
+			notes.insert();
+		}
 	}
 })();]]></script>
         <servicenow>false</servicenow>
@@ -128,14 +161,14 @@
         <sys_created_by>admin</sys_created_by>
         <sys_created_on>2019-07-30 07:18:41</sys_created_on>
         <sys_id>7ac7b688db0f3300831ce37a4896199d</sys_id>
-        <sys_mod_count>110</sys_mod_count>
+        <sys_mod_count>138</sys_mod_count>
         <sys_name>Edit Task Modal</sys_name>
         <sys_package display_value="GTD" source="x_380098_gtd">f8b6f91fdb663300506da08a489619bc</sys_package>
         <sys_policy/>
         <sys_scope display_value="GTD">f8b6f91fdb663300506da08a489619bc</sys_scope>
         <sys_update_name>sp_widget_7ac7b688db0f3300831ce37a4896199d</sys_update_name>
         <sys_updated_by>admin</sys_updated_by>
-        <sys_updated_on>2019-08-02 07:25:10</sys_updated_on>
+        <sys_updated_on>2019-08-13 10:20:40</sys_updated_on>
         <template><![CDATA[<script type="text/ng-template" id="editTaskModal">
 
 <div class="panel panel-default">
@@ -170,6 +203,20 @@
       <div class="form-group">
         <label for="taskDescription">Description</label>
         <input type="text" class="form-control" id="taskDescription" ng-model="c.data.description"/>
+      </div>
+      <div class="form-group">
+      	<label for="taskNotes">Notes</label>
+      	<div class="input-group" id="taskNotes">
+          <input type="text" class="form-control" id="note-content" />
+          <span class="input-group-btn">
+            <button class="btn btn-default" type="button" ng-click="c.updateNotes()">Post</button>
+          </span>
+      	</div>
+      </div>
+      <div class="form-group">
+        <div ng-repeat="note in data.notes">
+        	<p><strong>{{note.sys_created_by}}:</strong> {{note.value}}</p>
+        </div>
       </div>
       
     </form>
