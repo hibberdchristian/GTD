@@ -5,13 +5,10 @@
             <choice>
                 <element inactive_on_update="false" label="General" sequence="0" value="0"/>
                 <element inactive_on_update="false" label="Client" sequence="20" value="20"/>
-                <element inactive_on_update="false" label="Learn" sequence="30" value="30"/>
-                <element inactive_on_update="false" label="Play" sequence="40" value="40"/>
                 <element inactive_on_update="false" label="Work" sequence="50" value="50"/>
                 <element inactive_on_update="false" label="Test" sequence="60" value="60"/>
             </choice>
         </element>
-        <element label="Description" max_length="4000" name="description" type="string"/>
         <element attributes="ignore_filter_on_new=true" default="javascript:global.getNextObjNumberPadded();" label="Number" max_length="40" name="number" type="string"/>
         <element choice="3" default="2" label="Priority" max_length="40" name="priority" type="choice">
             <choice>

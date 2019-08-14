@@ -14,12 +14,12 @@
 		}).then(function(r) {
 			/* assigned the record values to c.data object */
 			c.data.title = r.data.task.title;
-			c.data.description = r.data.task.description;
 			c.data.category = r.data.task.category;
 			c.data.assigned_to = r.data.task.assigned_to;
 			c.data.priority = r.data.task.priority;
 			c.data.taskID = r.data.task.sys_id;
 			c.data.notes = r.data.task.notes;
+			c.data.user = r.data.user;
 			console.log(c.data)
 		}).then(function() {
 			$scope.user = {
@@ -38,7 +38,8 @@
 			/* open the Modal */
 			c.modalInstance = $uibModal.open({
 				templateUrl: 'editTaskModal',
-				scope: $scope
+				scope: $scope,
+				size: 'lg'
 			});
 		});
 	});
@@ -48,7 +49,6 @@
 		var updateTask = {
 			action: 'updateTask',
 			taskID: c.data.taskID,
-			taskDescription: c.data.description,
 			taskCategory: $scope.category.value,
 			taskPriority: c.data.priority,
 			taskAssignedTo: $scope.user.value,
@@ -76,20 +76,32 @@
 			return;
 		}
 		c.server.get(updateNotes).then(function(r) {
-			// How to post the comment without leaving the modal?
+			var content = document.createElement("p");
+			var author = document.createElement("strong");
+			author.append(c.data.user + ":");
+			content.append(author);
+			content.append(" " + updateNotes.noteContent);
+			document.getElementById("note-list").prepend(content);
+			document.getElementById("note-content").value = '';
 		});
 	}
-
-	/* controls the sn-record-pickers */
-	$scope.$on("field.change", function(evt, parms) {
-		if (parms.field.name == 'user')
-			c.data.setUser = parms.newValue;
-
-		c.server.update().then(function(response) {
-			spUtil.update($scope);
+	
+	c.newUser = function() {
+		var newUser = {
+			action: 'newUser',
+			taskID: c.data.taskID,
+			userName: document.getElementById("user-name").value
+		}
+		if (newUser.userName == '') {
+			return;
+		}
+		c.server.get(newUser).then(function(r) {
+				$scope.user.displayValue  = newUser.userName;
+				$scope.user.value = r.data.new_user;
+//				document.getElementById("assigned-to").getElementsByClassName("select2-chosen")[0].innerText = c.data.new_user;
+				$('#collapse').collapse('hide');
 		})
-	});
-
+	}
 }]]></client_script>
         <controller_as>c</controller_as>
         <css/>
@@ -110,13 +122,15 @@
 	/* populate the 'data' object */
 
 	if (input && input.taskID) {
+		data.user = gs.getUserName();
 		var task = new GlideRecord('x_380098_gtd_tasks');
 		var notes = new GlideRecord('sys_journal_field');
+		var user = new GlideRecord('sys_user');
 		/* gets the selected task data from the server */
 		if (task.get(input.taskID)) {
 			if (input.action == 'getTask') {
 				data.task = {};
-				$sp.getRecordDisplayValues(data.task, task, "title,description,sys_id");
+				$sp.getRecordDisplayValues(data.task, task, "title,sys_id");
 				data.task.priority = task.getValue('priority');
 				data.task.assigned_to = {
 					name: task.getDisplayValue('assigned_to'),
@@ -128,6 +142,7 @@
 				}
 				data.task.notes = [];
 				notes.addQuery('element_id',input.taskID);
+				notes.orderByDesc('sys_created_on');
 				notes.query();
 				while (notes.next()) {
 					var note = {};
@@ -138,7 +153,6 @@
 			/* updates the selected task data */
 			else if (input.action == 'updateTask') { 
 				task.title = input.taskTitle; 
-				task.description = input.taskDescription; 
 				task.category = input.taskCategory;
 				task.priority = input.taskPriority;
 				task.assigned_to = input.taskAssignedTo;
@@ -154,6 +168,11 @@
 			notes.name = 'x_380098_gtd_tasks';
 			notes.insert();
 		}
+		else if (input.action == 'newUser') {
+			user.initialize();
+			user.name = input.userName;
+			data.new_user = user.insert();
+		}
 	}
 })();]]></script>
         <servicenow>false</servicenow>
@@ -161,14 +180,14 @@
         <sys_created_by>admin</sys_created_by>
         <sys_created_on>2019-07-30 07:18:41</sys_created_on>
         <sys_id>7ac7b688db0f3300831ce37a4896199d</sys_id>
-        <sys_mod_count>138</sys_mod_count>
+        <sys_mod_count>197</sys_mod_count>
         <sys_name>Edit Task Modal</sys_name>
         <sys_package display_value="GTD" source="x_380098_gtd">f8b6f91fdb663300506da08a489619bc</sys_package>
         <sys_policy/>
         <sys_scope display_value="GTD">f8b6f91fdb663300506da08a489619bc</sys_scope>
         <sys_update_name>sp_widget_7ac7b688db0f3300831ce37a4896199d</sys_update_name>
         <sys_updated_by>admin</sys_updated_by>
-        <sys_updated_on>2019-08-13 10:20:40</sys_updated_on>
+        <sys_updated_on>2019-08-14 08:54:22</sys_updated_on>
         <template><![CDATA[<script type="text/ng-template" id="editTaskModal">
 
 <div class="panel panel-default">
@@ -177,11 +196,11 @@
   </div>
   <div class="panel-body wrapper-xl">
     <form>
-      
+
       <div class="row">
-        <div class="form-group col-xs-4">
-          <label for="taskAssignedTo">Assigned To</label>
-        	<sn-record-picker field="user" table="'sys_user'" display-field="'name'" value-field="'sys_id'" search-fields="'name'" page-size="20" ></sn-record-picker>
+        <div class="form-group col-xs-4" id="assigned-to">
+          <label for="taskAssignedTo"><span class="glyphicon glyphicon-plus" data-toggle="collapse" href="#collapse" aria-expanded="false" aria-controls="collapse" aria-hidden="true"></span>  Assigned To</label>
+          <sn-record-picker field="user" table="'sys_user'" display-field="'name'" value-field="'sys_id'" search-fields="'name'" page-size="20" ></sn-record-picker>
         </div>
         <div class="form-group col-xs-4">
           <label for="taskPriority">Priority</label>
@@ -192,33 +211,42 @@
           </select>
         </div>
         <div class="form-group col-xs-4">
-        <label for="taskCategory">Category</label>
-        <sn-record-picker field="category" table="'sys_choice'" default-query="'name=x_380098_gtd_tasks^element=category'" display-field="'label'" value-field="'value'" search-fields="'label'" page-size="20" ></sn-record-picker>
+          <label for="taskCategory">Category</label>
+          <sn-record-picker field="category" table="'sys_choice'" default-query="'name=x_380098_gtd_tasks^element=category'" display-field="'label'" value-field="'value'" search-fields="'label'" page-size="20" ></sn-record-picker>
+        </div>
       </div>
+
+      <div class="row well collapse" id="collapse">
+        <div class="form-group">
+          <label for="newUser">New User</label>
+          <div class="input-group" id="newUser">
+            <input type="text" class="form-control" id="user-name" placeholder="Insert full name"/>
+            <span class="input-group-btn">
+              <button class="btn btn-default" type="button" ng-click="c.newUser()">Create</button>
+            </span>
+          </div>
+        </div>
       </div>
+
       <div class="form-group">
         <label for="taskTitle">Task</label>
         <input type="text" class="form-control" id="taskTitle" ng-model="c.data.title"/>
       </div>
       <div class="form-group">
-        <label for="taskDescription">Description</label>
-        <input type="text" class="form-control" id="taskDescription" ng-model="c.data.description"/>
-      </div>
-      <div class="form-group">
-      	<label for="taskNotes">Notes</label>
-      	<div class="input-group" id="taskNotes">
+        <label for="taskNotes">Notes</label>
+        <div class="input-group" id="taskNotes">
           <input type="text" class="form-control" id="note-content" />
           <span class="input-group-btn">
             <button class="btn btn-default" type="button" ng-click="c.updateNotes()">Post</button>
           </span>
-      	</div>
-      </div>
-      <div class="form-group">
-        <div ng-repeat="note in data.notes">
-        	<p><strong>{{note.sys_created_by}}:</strong> {{note.value}}</p>
         </div>
       </div>
-      
+      <div class="form-group" id="note-list">
+        <div ng-repeat="note in data.notes">
+          <p><strong>{{note.sys_created_by}}:</strong> {{note.value}}</p>
+        </div>
+      </div>
+
     </form>
   </div>
   <div class="panel-footer text-right">

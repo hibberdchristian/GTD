@@ -43,44 +43,6 @@
             <element>category</element>
             <hint/>
             <inactive>false</inactive>
-            <label>Learn</label>
-            <language>en</language>
-            <name>x_380098_gtd_tasks</name>
-            <sequence>30</sequence>
-            <sys_created_by>admin</sys_created_by>
-            <sys_created_on>2019-08-08 08:20:03</sys_created_on>
-            <sys_domain>global</sys_domain>
-            <sys_domain_path>/</sys_domain_path>
-            <sys_id>e12cdd83dbcf3300831ce37a4896190e</sys_id>
-            <sys_mod_count>9</sys_mod_count>
-            <sys_updated_by>admin</sys_updated_by>
-            <sys_updated_on>2019-08-08 08:57:40</sys_updated_on>
-            <value>30</value>
-        </sys_choice>
-        <sys_choice action="INSERT_OR_UPDATE">
-            <dependent_value/>
-            <element>category</element>
-            <hint/>
-            <inactive>false</inactive>
-            <label>Play</label>
-            <language>en</language>
-            <name>x_380098_gtd_tasks</name>
-            <sequence>40</sequence>
-            <sys_created_by>admin</sys_created_by>
-            <sys_created_on>2019-08-08 08:36:11</sys_created_on>
-            <sys_domain>global</sys_domain>
-            <sys_domain_path>/</sys_domain_path>
-            <sys_id>86df9587dbcf3300831ce37a48961902</sys_id>
-            <sys_mod_count>7</sys_mod_count>
-            <sys_updated_by>admin</sys_updated_by>
-            <sys_updated_on>2019-08-08 08:57:43</sys_updated_on>
-            <value>40</value>
-        </sys_choice>
-        <sys_choice action="INSERT_OR_UPDATE">
-            <dependent_value/>
-            <element>category</element>
-            <hint/>
-            <inactive>false</inactive>
             <label>Work</label>
             <language>en</language>
             <name>x_380098_gtd_tasks</name>

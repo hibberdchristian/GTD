@@ -43,7 +43,6 @@
 	c.createTask = function() {
 		var newTask = {
 			action: 'createTask',
-			taskDescription: c.data.description,
 			taskCategory: $scope.category.value,
 			taskPriority: c.data.priority,
 			taskAssignedTo: $scope.user.value,
@@ -95,7 +94,6 @@
 		if (input.action == 'createTask') {
 			task.initialize();
 			task.title = input.taskTitle; 
-			task.description = input.taskDescription; 
 			task.category = input.taskCategory;
 			task.priority = input.taskPriority;
 			task.assigned_to = input.taskAssignedTo;
@@ -109,14 +107,14 @@
         <sys_created_by>admin</sys_created_by>
         <sys_created_on>2019-08-01 06:21:24</sys_created_on>
         <sys_id>dfdd38f8db433300831ce37a48961945</sys_id>
-        <sys_mod_count>24</sys_mod_count>
+        <sys_mod_count>25</sys_mod_count>
         <sys_name>New Task Modal</sys_name>
         <sys_package display_value="GTD" source="x_380098_gtd">f8b6f91fdb663300506da08a489619bc</sys_package>
         <sys_policy/>
         <sys_scope display_value="GTD">f8b6f91fdb663300506da08a489619bc</sys_scope>
         <sys_update_name>sp_widget_dfdd38f8db433300831ce37a48961945</sys_update_name>
         <sys_updated_by>admin</sys_updated_by>
-        <sys_updated_on>2019-08-02 06:01:07</sys_updated_on>
+        <sys_updated_on>2019-08-14 03:30:23</sys_updated_on>
         <template><![CDATA[<script type="text/ng-template" id="newTaskModal">
 
 <div class="panel panel-default">
@@ -147,10 +145,6 @@
       <div class="form-group">
         <label for="taskTitle">Task</label>
         <input type="text" class="form-control" id="taskTitle" ng-model="c.data.title"/>
-      </div>
-      <div class="form-group">
-        <label for="taskDescription">Description</label>
-        <input type="text" class="form-control" id="taskDescription" ng-model="c.data.description"/>
       </div>
       
     </form>

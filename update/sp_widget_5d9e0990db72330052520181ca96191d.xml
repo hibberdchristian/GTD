@@ -222,7 +222,6 @@
 		//use service portal helper method to get some display values
 		$sp.getRecordDisplayValues(taskObj, taskGR, 'title,category,assigned_to,sys_id');
 		//get the first 20 characters of the description
-		taskObj.description = taskGR.getValue('description').slice(0,400);
 		taskObj.priority = taskGR.getValue('priority');
 		//push the populated obj into the array
 		data.tasks.push(taskObj);
@@ -268,7 +267,7 @@
 				taskBulkUpdate.addEncodedQuery(queryString);
 				taskBulkUpdate.addQuery('category',input.categoryValue);
 				taskBulkUpdate.query();
-				taskBulkUpdate.setValue('category','0.0');
+				taskBulkUpdate.setValue('category','0');
 				taskBulkUpdate.updateMultiple();
 			}
 		}
@@ -280,14 +279,14 @@
         <sys_created_by>admin</sys_created_by>
         <sys_created_on>2019-07-18 08:01:47</sys_created_on>
         <sys_id>5d9e0990db72330052520181ca96191d</sys_id>
-        <sys_mod_count>625</sys_mod_count>
+        <sys_mod_count>627</sys_mod_count>
         <sys_name>Kanban Board</sys_name>
         <sys_package display_value="GTD" source="x_380098_gtd">f8b6f91fdb663300506da08a489619bc</sys_package>
         <sys_policy/>
         <sys_scope display_value="GTD">f8b6f91fdb663300506da08a489619bc</sys_scope>
         <sys_update_name>sp_widget_5d9e0990db72330052520181ca96191d</sys_update_name>
         <sys_updated_by>admin</sys_updated_by>
-        <sys_updated_on>2019-08-13 07:26:21</sys_updated_on>
+        <sys_updated_on>2019-08-14 03:41:32</sys_updated_on>
         <template><![CDATA[<div class="container-fluid" id="drag-and-drop">
 
   <script>
