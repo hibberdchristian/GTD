@@ -34,7 +34,7 @@ $text-muted: #646567;
         <sc_catalog_page/>
         <sc_category_page/>
         <sp_chat_queue/>
-        <sp_rectangle_menu display_value="GTB Header Menu">39b5825bdba63300506da08a48961969</sp_rectangle_menu>
+        <sp_rectangle_menu display_value="GTD Header Menu">39b5825bdba63300506da08a48961969</sp_rectangle_menu>
         <sqanda_knowledge_base/>
         <sys_class_name>sp_portal</sys_class_name>
         <sys_created_by>admin</sys_created_by>
