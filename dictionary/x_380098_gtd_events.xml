@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?><database>
+    <element label="Events" max_length="40" name="x_380098_gtd_events" type="collection">
+        <element label="All Day Event" max_length="40" name="all_day_event" type="boolean"/>
+        <element label="Attendees" max_length="4000" name="attendees" reference="sys_user" type="glide_list"/>
+        <element label="Description" max_length="500" name="description" type="string"/>
+        <element label="End Time" max_length="40" name="end_time" type="glide_date_time"/>
+        <element label="Location" max_length="40" name="location" type="string"/>
+        <element label="Meeting Notes" max_length="8000" name="meeting_notes" type="html"/>
+        <element attributes="ignore_filter_on_new=true" default="javascript:global.getNextObjNumberPadded();" label="Number" max_length="40" name="number" type="string"/>
+        <element label="Start Time" max_length="40" name="start_time" type="glide_date_time"/>
+        <element label="Title" max_length="40" name="title" type="string"/>
+    </element>
+</database>

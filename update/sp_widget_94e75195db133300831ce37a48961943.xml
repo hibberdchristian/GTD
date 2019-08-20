@@ -1,69 +1,30 @@
 <?xml version="1.0" encoding="UTF-8"?><record_update table="sp_widget">
     <sp_widget action="INSERT_OR_UPDATE">
         <category>custom</category>
-        <client_script><![CDATA[function() {
+        <client_script><![CDATA[function($rootScope,$scope,spModal) {
 	/* widget controller */
 	var c = this;
+	console.log(c.data.events);
 
 	var calendarEl = document.getElementById('calendar');
 
   var calendar = new FullCalendar.Calendar(calendarEl, {
     plugins: [ 'interaction', 'dayGrid', 'timeGrid' ],
     defaultView: 'dayGridMonth',
-    defaultDate: '2019-08-07',
     header: {
       left: 'prev,next today',
       center: 'title',
       right: 'dayGridMonth,timeGridWeek,timeGridDay'
     },
-    events: [
-      {
-        title: 'All Day Event',
-        start: '2019-08-01'
-      },
-      {
-        title: 'Long Event',
-        start: '2019-08-07',
-        end: '2019-08-10'
-      },
-      {
-        groupId: '999',
-        title: 'Repeating Event',
-        start: '2019-08-09T16:00:00'
-      },
-      {
-        groupId: '999',
-        title: 'Repeating Event',
-        start: '2019-08-16T16:00:00'
-      },
-      {
-        title: 'Conference',
-        start: '2019-08-11',
-        end: '2019-08-13'
-      },
-      {
-        title: 'Meeting',
-        start: '2019-08-12T10:30:00',
-        end: '2019-08-12T12:30:00'
-      },
-      {
-        title: 'Lunch',
-        start: '2019-08-12T12:00:00'
-      },
-      {
-        title: 'Meeting',
-        start: '2019-08-12T14:30:00'
-      },
-      {
-        title: 'Birthday Party',
-        start: '2019-08-13T07:00:00'
-      },
-      {
-        title: 'Click for Google',
-        url: 'http://google.com/',
-        start: '2019-08-28'
-      }
-    ]
+		events: c.data.events,
+		
+		eventClick: function(info) {
+			var id = info.event.id;
+			console.log("Event sent: " + id);
+			$rootScope.eventID = id;
+			$rootScope.$emit('selectEvent', id);
+		}
+		
   });
 
   calendar.render();
@@ -84,20 +45,36 @@
         <option_schema/>
         <public>false</public>
         <roles/>
-        <script><![CDATA[(function() {  /* populate the 'data' object */  /* e.g., data.table = $sp.getValue('table'); */})();]]></script>
+        <script><![CDATA[(function() {
+  /* populate the 'data' object */
+  data.events = [];
+	
+	var eventGR = new GlideRecord('x_380098_gtd_events');
+	eventGR.query();
+	while (eventGR.next()) {
+		var eventObj = {};
+		$sp.getRecordDisplayValues(eventObj, eventGR, 'title,description,attendees,location');
+		eventObj.start = eventGR.getValue('start_time');
+		eventObj.end = eventGR.getValue('end_time');
+		eventObj.id = eventGR.getUniqueValue();
+		eventObj.allDay = (eventGR.getDisplayValue('all_day_event') == 'true');
+		data.events.push(eventObj);
+	}
+
+})();]]></script>
         <servicenow>false</servicenow>
         <sys_class_name>sp_widget</sys_class_name>
         <sys_created_by>admin</sys_created_by>
         <sys_created_on>2019-08-15 07:47:43</sys_created_on>
         <sys_id>94e75195db133300831ce37a48961943</sys_id>
-        <sys_mod_count>22</sys_mod_count>
+        <sys_mod_count>60</sys_mod_count>
         <sys_name>Calendar</sys_name>
         <sys_package display_value="GTD" source="x_380098_gtd">f8b6f91fdb663300506da08a489619bc</sys_package>
         <sys_policy/>
         <sys_scope display_value="GTD">f8b6f91fdb663300506da08a489619bc</sys_scope>
         <sys_update_name>sp_widget_94e75195db133300831ce37a48961943</sys_update_name>
         <sys_updated_by>admin</sys_updated_by>
-        <sys_updated_on>2019-08-15 09:47:11</sys_updated_on>
+        <sys_updated_on>2019-08-20 08:37:17</sys_updated_on>
         <template><![CDATA[<!DOCTYPE html>
 <html lang='en'>
   <head>

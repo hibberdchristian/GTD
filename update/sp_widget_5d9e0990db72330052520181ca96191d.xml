@@ -165,7 +165,7 @@
 	padding-bottom: 15px;
 }
 .panel-heading {
-  background-color: #00486D;
+  background-color: #2C3E50;
   color: #FFFFFF;
 }
 .nopadding {
@@ -279,14 +279,14 @@
         <sys_created_by>admin</sys_created_by>
         <sys_created_on>2019-07-18 08:01:47</sys_created_on>
         <sys_id>5d9e0990db72330052520181ca96191d</sys_id>
-        <sys_mod_count>627</sys_mod_count>
+        <sys_mod_count>632</sys_mod_count>
         <sys_name>Kanban Board</sys_name>
         <sys_package display_value="GTD" source="x_380098_gtd">f8b6f91fdb663300506da08a489619bc</sys_package>
         <sys_policy/>
         <sys_scope display_value="GTD">f8b6f91fdb663300506da08a489619bc</sys_scope>
         <sys_update_name>sp_widget_5d9e0990db72330052520181ca96191d</sys_update_name>
         <sys_updated_by>admin</sys_updated_by>
-        <sys_updated_on>2019-08-14 03:41:32</sys_updated_on>
+        <sys_updated_on>2019-08-20 07:30:12</sys_updated_on>
         <template><![CDATA[<div class="container-fluid" id="drag-and-drop">
 
   <script>
@@ -342,7 +342,7 @@
                   <span class="badge p{{task.priority}}">P{{task.priority}}</span>
                   <h5><strong>{{task.assigned_to}}</strong></h5>
                 </div>
-                <p>{{task.title}}</p>
+                <h5>{{task.title}}</h5>
               </div>
             </div>
 
@@ -352,7 +352,7 @@
       </div>
 
       <div class="row button">
-        <span ng-show="category.label != 'General'" ng-click="c.deleteCategory(category.sys_id,category.value)" class="glyphicon glyphicon-trash" aria-hidden="true"></span>
+        <span ng-show="category.label != 'General' && category.label != 'Meeting Actions'" ng-click="c.deleteCategory(category.sys_id,category.value)" class="glyphicon glyphicon-trash" aria-hidden="true"></span>
       </div>
 
     </div>  

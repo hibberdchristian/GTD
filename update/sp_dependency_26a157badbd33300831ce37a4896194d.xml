@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?><record_update table="sp_dependency">
+    <sp_dependency action="INSERT_OR_UPDATE">
+        <module/>
+        <name>Event Form Dependencies</name>
+        <page_load>false</page_load>
+        <sp_portals/>
+        <sys_class_name>sp_dependency</sys_class_name>
+        <sys_created_by>admin</sys_created_by>
+        <sys_created_on>2019-08-20 08:30:56</sys_created_on>
+        <sys_id>26a157badbd33300831ce37a4896194d</sys_id>
+        <sys_mod_count>0</sys_mod_count>
+        <sys_name>Event Form Dependencies</sys_name>
+        <sys_package display_value="GTD" source="x_380098_gtd">f8b6f91fdb663300506da08a489619bc</sys_package>
+        <sys_policy/>
+        <sys_scope display_value="GTD">f8b6f91fdb663300506da08a489619bc</sys_scope>
+        <sys_update_name>sp_dependency_26a157badbd33300831ce37a4896194d</sys_update_name>
+        <sys_updated_by>admin</sys_updated_by>
+        <sys_updated_on>2019-08-20 08:30:56</sys_updated_on>
+    </sp_dependency>
+</record_update>

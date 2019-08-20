@@ -7,6 +7,7 @@
                 <element inactive_on_update="false" label="Client" sequence="20" value="20"/>
                 <element inactive_on_update="false" label="Work" sequence="50" value="50"/>
                 <element inactive_on_update="false" label="Test" sequence="60" value="60"/>
+                <element inactive_on_update="false" label="Meeting Actions" sequence="61" value="61.0"/>
             </choice>
         </element>
         <element attributes="ignore_filter_on_new=true" default="javascript:global.getNextObjNumberPadded();" label="Number" max_length="40" name="number" type="string"/>
