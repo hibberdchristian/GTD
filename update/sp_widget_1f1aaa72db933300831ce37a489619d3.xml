@@ -4,21 +4,17 @@
         <client_script><![CDATA[function($rootScope,$scope,spModal) {
   /* widget controller */
   var c = this;
-	
-	$('#summernote').summernote({
-		toolbar: [
-			['style', ['bold', 'italic', 'underline']],
-			['para', ['ul', 'ol']]
-		],
-		placeholder: 'Include the meeting minutes here...'
-	});
+	/* hide the event content when the widget loads*/
+	$('#event-content').hide();
 	
 	$rootScope.$on('selectEvent', function(event,data) {
 		console.log('Event received: ' + $rootScope.eventID);
+		/* call the server */
 		c.server.get({
 			action: 'getEvent',
 			eventID: $rootScope.eventID
 		}).then(function(r) {
+			/* assign values to the client data object */
 			c.data.title = r.data.event.title;
 			c.data.description = r.data.event.description;
 			c.data.attendees = r.data.event.attendees;
@@ -29,18 +25,38 @@
 			c.data.allDay = r.data.event.allDay;
 			c.data.meeting_notes = r.data.event.meeting_notes;
 			console.log(c.data);
+			/* remove the prompt and show the event content*/
+			$("#prompt").empty();
+			$('#event-content').show();
 		}).then(function() {
-			$('#summernote').summernote('code', c.data.meeting_notes);
+			document.getElementById("summernote").innerHTML = c.data.meeting_notes;
 		})
 	})
 	
 	c.updateEvent = function() {
-		var markupStr = $('#summernote').summernote('code');
-		c.server.get({
-			action: 'updateEvent',
-			eventID: c.data.sys_id,
-			meetingNotes: markupStr
-		})
+		if(document.getElementById("edit-minutes").innerHTML == 'Edit') {
+			$('#summernote').summernote({
+				toolbar: [
+					['style', ['bold', 'italic', 'underline']],
+					['para', ['ul', 'ol']]
+				],
+				placeholder: 'Include the meeting minutes here...'
+			});
+			$('#summernote').summernote('code', c.data.meeting_notes);
+			document.getElementById("edit-minutes").innerHTML = 'Save'
+		} else {
+			var markupStr = $('#summernote').summernote('code');
+			c.server.get({
+				action: 'updateEvent',
+				eventID: c.data.sys_id,
+				meetingNotes: markupStr
+			}).then(function(r) {
+				$('#summernote').summernote('destroy');
+				c.data.meeting_notes = markupStr;
+				document.getElementById("summernote").innerHTML = markupStr;
+				document.getElementById("edit-minutes").innerHTML = 'Edit'
+			})
+		}
 	}
 }]]></client_script>
         <controller_as>c</controller_as>
@@ -95,14 +111,14 @@
         <sys_created_by>admin</sys_created_by>
         <sys_created_on>2019-08-20 05:37:53</sys_created_on>
         <sys_id>1f1aaa72db933300831ce37a489619d3</sys_id>
-        <sys_mod_count>90</sys_mod_count>
+        <sys_mod_count>154</sys_mod_count>
         <sys_name>Event Form</sys_name>
         <sys_package display_value="GTD" source="x_380098_gtd">f8b6f91fdb663300506da08a489619bc</sys_package>
         <sys_policy/>
         <sys_scope display_value="GTD">f8b6f91fdb663300506da08a489619bc</sys_scope>
         <sys_update_name>sp_widget_1f1aaa72db933300831ce37a489619d3</sys_update_name>
         <sys_updated_by>admin</sys_updated_by>
-        <sys_updated_on>2019-08-20 10:04:06</sys_updated_on>
+        <sys_updated_on>2019-08-21 09:28:30</sys_updated_on>
         <template><![CDATA[<!DOCTYPE html>
 <html lang="en">
   <body>
@@ -112,42 +128,74 @@
         Event
       </div>
 
-      <div class="panel-body">
-        <h5><strong>Title: </strong>{{c.data.title}}</h5>
-        <h5><strong>Location: </strong>{{c.data.location}}</h5>
-        <h5><strong>Attendees: </strong>{{c.data.attendees}}</h5>
-        <h5><strong>Start: </strong>{{c.data.start_time}}</h5>
-        <h5><strong>End: </strong>{{c.data.end_time}}</h5>
-        <h5><strong>Description: </strong><em>{{c.data.description}}</em></h5>
+      <div id="prompt">
+        <div class="panel-body text-center text-italic text-muted">
+          <em>Select an event from the calendar to view details...</em> 
+        </div> 
       </div>
+      
+      <div id="event-content">
 
-      <div class="panel-heading container-fluid">
-        <div class="row">
-          <div class="col-xs-6">Minutes</div>
-          <div class="col-xs-6">
-            <button class="btn btn-default pull-right" type="submit" ng-click="c.updateEvent()">Save</button>
+        <div class="panel-body">
+          <h5><strong>Title: </strong>{{c.data.title}}</h5>
+          <h5><strong>Location: </strong>{{c.data.location}}</h5>
+          <h5><strong>Attendees: </strong>{{c.data.attendees}}</h5>
+          <h5><strong>Start: </strong>{{c.data.start_time}}</h5>
+          <h5><strong>End: </strong>{{c.data.end_time}}</h5>
+          <h5><strong>Description: </strong><em>{{c.data.description}}</em></h5>
+        </div>
+
+        <div class="panel-heading container-fluid">
+          <div class="row">
+            <div class="col-xs-6">Minutes</div>
+            <div class="col-xs-6">
+              <button class="btn btn-default pull-right" type="submit" ng-click="c.updateEvent()" id="edit-minutes">Edit</button>
+            </div>
           </div>
         </div>
-      </div>
 
-      <div class="panel-body">
-        <form>
-          <div class="form-group">
-            <textarea class="form-control" id="summernote" name="editordata"></textarea>
-          </div>
-        </form>
-      </div>
+        <div class="panel-body">
+          <form>
+            <div class="form-group">
+              <div id="summernote" name="editordata"></div>
+            </div>
+          </form>
+        </div>
 
-      <div class="panel-heading">
-        Actions
-      </div>
+        <div class="panel-heading">
+          Actions
+        </div>
 
-      <div class="panel-body">
-        <form>
-          <div class="form-group">
+        <div class="panel-body">
+          <form>
+            <div class="form-group">
+              <div class="table-responsive">
+                <table class="table table-condensed table-hover">
+                  <thead>
+                    <tr>
+                      <th>Description</th>
+                      <th>Assigned to</th>
+                      <th>Priority</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr>
+                      <td><span class="glyphicon glyphicon-plus-sign" aria-hidden="true"></span></td>
+                      <td></td>
+                      <td></td>
+                    </tr>
+                    <tr>
+                      <td></td>
+                      <td></td>
+                      <td></td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </form>
+        </div>
 
-          </div>
-        </form>
       </div>
 
     </div>

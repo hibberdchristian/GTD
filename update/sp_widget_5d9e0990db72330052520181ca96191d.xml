@@ -113,20 +113,23 @@
 
 }]]></client_script>
         <controller_as>c</controller_as>
-        <css>.badge {
-  background-color: #d5dee0;
+        <css>.panel-heading .row {
+  padding: 0px;	  
 }
-.p1 {
+.panel-heading .badge {
+  background-color: #8e9091;
+}
+.panel-heading .p1 {
   color: #fff;
   background-color: #d9534f;
   border-color: #d43f3a;
 }
-.p2 {
+.panel-heading .p2 {
   color: #fff;
   background-color: #f0ad4e;
   border-color: #eea236;
 }
-.p3 {
+.panel-heading .p3 {
   color: #fff;
   background-color: #5cb85c;
   border-color: #4cae4c;
@@ -158,7 +161,7 @@
 }
 .swimlane-body {
   overflow-y: scroll;
-  height: 500px;
+  height: 440px;
   padding: 5px
 }
 .row {
@@ -279,14 +282,14 @@
         <sys_created_by>admin</sys_created_by>
         <sys_created_on>2019-07-18 08:01:47</sys_created_on>
         <sys_id>5d9e0990db72330052520181ca96191d</sys_id>
-        <sys_mod_count>632</sys_mod_count>
+        <sys_mod_count>651</sys_mod_count>
         <sys_name>Kanban Board</sys_name>
         <sys_package display_value="GTD" source="x_380098_gtd">f8b6f91fdb663300506da08a489619bc</sys_package>
         <sys_policy/>
         <sys_scope display_value="GTD">f8b6f91fdb663300506da08a489619bc</sys_scope>
         <sys_update_name>sp_widget_5d9e0990db72330052520181ca96191d</sys_update_name>
         <sys_updated_by>admin</sys_updated_by>
-        <sys_updated_on>2019-08-20 07:30:12</sys_updated_on>
+        <sys_updated_on>2019-08-21 09:53:11</sys_updated_on>
         <template><![CDATA[<div class="container-fluid" id="drag-and-drop">
 
   <script>
@@ -337,11 +340,16 @@
 
             <div class="card panel panel-default col-xs-12" id="{{task.sys_id}}" draggable="true" ondragstart="getScope().drag(event)">
 
-              <div class="card-body panel-body" ng-click="c.selectItem(task.sys_id)">
-                <div>
-                  <span class="badge p{{task.priority}}">P{{task.priority}}</span>
-                  <h5><strong>{{task.assigned_to}}</strong></h5>
+              <div class="panel-heading container-fluid">
+                <div class="row">
+                  <div class="col-xs-9"><h5><strong>{{task.assigned_to}}</strong></h5></div>
+                  <div class="col-xs-3">
+                    <span class="badge p{{task.priority}} pull-right">P{{task.priority}}</span>
+                  </div>
                 </div>
+              </div>
+              
+              <div class="card-body panel-body" ng-click="c.selectItem(task.sys_id)">
                 <h5>{{task.title}}</h5>
               </div>
             </div>
