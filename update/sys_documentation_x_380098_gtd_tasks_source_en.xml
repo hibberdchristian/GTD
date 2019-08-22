@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?><record_update>
+    <sys_documentation element="source" label="Source" language="en" table="x_380098_gtd_tasks">
+        <sys_documentation action="INSERT_OR_UPDATE">
+            <element>source</element>
+            <help/>
+            <hint/>
+            <label>Source</label>
+            <language>en</language>
+            <name>x_380098_gtd_tasks</name>
+            <plural>Sources</plural>
+            <sys_class_name>sys_documentation</sys_class_name>
+            <sys_created_by>admin</sys_created_by>
+            <sys_created_on>2019-08-22 08:24:29</sys_created_on>
+            <sys_id>cb63e12bdb533300831ce37a489619fa</sys_id>
+            <sys_mod_count>0</sys_mod_count>
+            <sys_name>Source</sys_name>
+            <sys_package display_value="GTD" source="x_380098_gtd">f8b6f91fdb663300506da08a489619bc</sys_package>
+            <sys_policy/>
+            <sys_scope display_value="GTD">f8b6f91fdb663300506da08a489619bc</sys_scope>
+            <sys_update_name>sys_documentation_x_380098_gtd_tasks_source_en</sys_update_name>
+            <sys_updated_by>admin</sys_updated_by>
+            <sys_updated_on>2019-08-22 08:24:29</sys_updated_on>
+            <url/>
+            <url_target/>
+        </sys_documentation>
+    </sys_documentation>
+</record_update>

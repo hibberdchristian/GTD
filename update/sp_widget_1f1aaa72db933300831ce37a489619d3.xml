@@ -24,12 +24,23 @@
 			c.data.sys_id = r.data.event.id;
 			c.data.allDay = r.data.event.allDay;
 			c.data.meeting_notes = r.data.event.meeting_notes;
+			c.data.actions = r.data.event.actions;
 			console.log(c.data);
 			/* remove the prompt and show the event content*/
 			$("#prompt").empty();
+			$('#action-insert').empty();
 			$('#event-content').show();
 		}).then(function() {
 			document.getElementById("summernote").innerHTML = c.data.meeting_notes;
+			for (i=0;i<c.data.actions.length;i++) {
+				console.log(c.data.actions);
+				insertAction(
+					c.data.actions[i].title,
+					c.data.actions[i].assigned_to.name,
+					c.data.actions[i].priority,
+					(c.data.actions[i].state == "Closed")
+				)
+			}
 		})
 	})
 	
@@ -58,6 +69,46 @@
 			})
 		}
 	}
+
+	function insertAction(description, assigned_to, priority, strikethrough) {
+		var row = document.createElement("tr");
+		if (strikethrough) {
+			row.style.textDecoration = 'line-through';
+		}
+		var new_action = {
+			empty_cell: '',
+			description: description,
+			assigned_to: assigned_to,
+			priority: 'P' + priority
+		};
+		for (var key in new_action) {
+			var column = document.createElement("td");
+			column.append(new_action[key]);
+			row.append(column);
+		}
+		document.getElementById("action-insert").append(row);
+	}
+	
+	c.addTask = function() {
+		var addTask = {
+			action: 'addTask',
+			eventID: c.data.sys_id,
+			taskTitle: document.getElementById("taskDescription").value, 
+			taskPriority: document.getElementById("taskPriority").value,
+			taskAssignedTo: $scope.user.value
+		}
+		if (addTask.taskTitle == '' || addTask.taskAssignedTo == null || addTask.taskAssignedTo == '' || addTask.taskPriority == '') {
+			spModal.alert('Please complete all fields to add a new action.')
+			return;
+		}
+		c.server.get(addTask).then(function() {
+			insertAction(addTask.taskTitle,$scope.user.displayValue,addTask.taskPriority);
+			document.getElementById("taskPriority").value = '';
+			document.getElementById("taskDescription").value = '';
+			$scope.user.value = null;		
+		})		
+	}
+	
 }]]></client_script>
         <controller_as>c</controller_as>
         <css>.panel-heading {
@@ -89,6 +140,7 @@
 	if (input && input.eventID) {
 		console.log(input);
 		var event = new GlideRecord('x_380098_gtd_events');
+		var task = new GlideRecord('x_380098_gtd_tasks');
 		if (event.get(input.eventID)) {
 			if (input.action == 'getEvent') {
 				data.event = {};
@@ -97,10 +149,34 @@
 				data.event.end = event.getValue('end_time');
 				data.event.id = event.getUniqueValue();
 				data.event.allDay = (event.getDisplayValue('all_day_event') == 'true');
+				/* Get the actions for this event*/
+				data.event.actions = [];
+				task.addQuery('source',data.event.id);
+				task.query();
+				while (task.next()) {
+					var action = {}
+					$sp.getRecordDisplayValues(action, task, 'title,state')
+					action.priority = task.getValue('priority');
+					action.assigned_to = {
+						name: task.getDisplayValue('assigned_to'),
+						sys_id: task.getValue('assigned_to')
+					}
+					data.event.actions.push(action);
+				}
 			}
 			else if (input.action == 'updateEvent') {
 				event.meeting_notes = input.meetingNotes;
 				event.update();
+			}
+			else if (input.action == 'addTask') {
+				console.log(input);
+				task.initialize();
+				task.title = input.taskTitle; 
+				task.category = '10'; // Meeting Actions
+				task.priority = input.taskPriority;
+				task.assigned_to = input.taskAssignedTo;
+				task.source = input.eventID;
+				task.insert(); 
 			}
 		}
 	}
@@ -111,14 +187,14 @@
         <sys_created_by>admin</sys_created_by>
         <sys_created_on>2019-08-20 05:37:53</sys_created_on>
         <sys_id>1f1aaa72db933300831ce37a489619d3</sys_id>
-        <sys_mod_count>154</sys_mod_count>
+        <sys_mod_count>237</sys_mod_count>
         <sys_name>Event Form</sys_name>
         <sys_package display_value="GTD" source="x_380098_gtd">f8b6f91fdb663300506da08a489619bc</sys_package>
         <sys_policy/>
         <sys_scope display_value="GTD">f8b6f91fdb663300506da08a489619bc</sys_scope>
         <sys_update_name>sp_widget_1f1aaa72db933300831ce37a489619d3</sys_update_name>
         <sys_updated_by>admin</sys_updated_by>
-        <sys_updated_on>2019-08-21 09:28:30</sys_updated_on>
+        <sys_updated_on>2019-08-22 09:48:51</sys_updated_on>
         <template><![CDATA[<!DOCTYPE html>
 <html lang="en">
   <body>
@@ -173,22 +249,38 @@
                 <table class="table table-condensed table-hover">
                   <thead>
                     <tr>
+                      <th></th>
                       <th>Description</th>
                       <th>Assigned to</th>
                       <th>Priority</th>
                     </tr>
                   </thead>
+                  <tbody id="action-insert"></tbody>
                   <tbody>
-                    <tr>
-                      <td><span class="glyphicon glyphicon-plus-sign" aria-hidden="true"></span></td>
-                      <td></td>
-                      <td></td>
-                    </tr>
-                    <tr>
-                      <td></td>
-                      <td></td>
-                      <td></td>
-                    </tr>
+                    
+                      <tr>
+                        <td style="vertical-align: middle;" ng-click="c.addTask()"><span class="glyphicon glyphicon-plus-sign" aria-hidden="true"></span></td>
+                        <td>
+                          <input type="text" class="form-control" id="taskDescription"/>
+                        </td>
+                        <td>
+                          <sn-record-picker field="user" table="'sys_user'" display-field="'name'" value-field="'sys_id'" search-fields="'name'" page-size="20" ></sn-record-picker>
+                        </td>
+                        <td>
+                          <select type="text" class="form-control" id="taskPriority">
+                            <option></option>
+                            <option>1</option>
+                            <option>2</option>
+                            <option>3</option>
+                          </select>
+                        </td>
+                      </tr> 
+                      <tr>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                      </tr>
                   </tbody>
                 </table>
               </div>
@@ -196,6 +288,10 @@
           </form>
         </div>
 
+      </div>
+      
+      <div id="insert-task">
+        
       </div>
 
     </div>
