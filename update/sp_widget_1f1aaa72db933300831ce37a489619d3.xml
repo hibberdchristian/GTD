@@ -7,6 +7,24 @@
 	/* hide the event content when the widget loads*/
 	$('#event-content').hide();
 	
+	function findNewHashtags(searchText, currentHashtags) {
+		var regexp = /\B\#\w\w+\b/g
+		result = searchText.match(regexp);
+		var newHashtags = [];
+		if (result) {
+			for (i=0;i<result.length;i++) {
+				console.log(result[i]);
+				console.log(currentHashtags);
+				if (currentHashtags.indexOf(result[i]) == 0) {
+					newHashtags.push(result[i]);
+				}
+			}
+			return newHashtags;
+		} else {
+			return false;
+		}
+	}
+	
 	$rootScope.$on('selectEvent', function(event,data) {
 		console.log('Event received: ' + $rootScope.eventID);
 		/* call the server */
@@ -25,6 +43,7 @@
 			c.data.allDay = r.data.event.allDay;
 			c.data.meeting_notes = r.data.event.meeting_notes;
 			c.data.actions = r.data.event.actions;
+			c.data.tags = r.data.tags;
 			console.log(c.data);
 			/* remove the prompt and show the event content*/
 			$("#prompt").empty();
@@ -51,12 +70,27 @@
 					['style', ['bold', 'italic', 'underline']],
 					['para', ['ul', 'ol']]
 				],
-				placeholder: 'Include the meeting minutes here...'
+				placeholder: 'Include the meeting minutes here...',
+				hint: {
+					mentions: c.data.tags,
+					match: /\B#(\w*)$/,
+					search: function (keyword, callback) {
+						callback($.grep(this.mentions, function (item) {
+							return item.indexOf(keyword) == 0;
+						}));
+					},
+					content: function (item) {
+						return item;
+					}    
+				}
 			});
 			$('#summernote').summernote('code', c.data.meeting_notes);
 			document.getElementById("edit-minutes").innerHTML = 'Save'
 		} else {
 			var markupStr = $('#summernote').summernote('code');
+			/* Check for any new hashtags from the notes */
+			var newHashtags = findNewHashtags(markupStr,c.data.tags);		
+			console.log(newHashtags);
 			c.server.get({
 				action: 'updateEvent',
 				eventID: c.data.sys_id,
@@ -136,11 +170,13 @@
         <script><![CDATA[(function() {
   /* populate the 'data' object */
   /* e.g., data.table = $sp.getValue('table'); */
+	data.tags = [];
 	
 	if (input && input.eventID) {
 		console.log(input);
 		var event = new GlideRecord('x_380098_gtd_events');
 		var task = new GlideRecord('x_380098_gtd_tasks');
+		var tag = new GlideRecord('x_380098_gtd_tags');
 		if (event.get(input.eventID)) {
 			if (input.action == 'getEvent') {
 				data.event = {};
@@ -162,6 +198,10 @@
 						sys_id: task.getValue('assigned_to')
 					}
 					data.event.actions.push(action);
+				}
+				tag.query();
+				while (tag.next()) {
+					data.tags.push(tag.getValue('name'));
 				}
 			}
 			else if (input.action == 'updateEvent') {
@@ -187,14 +227,14 @@
         <sys_created_by>admin</sys_created_by>
         <sys_created_on>2019-08-20 05:37:53</sys_created_on>
         <sys_id>1f1aaa72db933300831ce37a489619d3</sys_id>
-        <sys_mod_count>237</sys_mod_count>
+        <sys_mod_count>280</sys_mod_count>
         <sys_name>Event Form</sys_name>
         <sys_package display_value="GTD" source="x_380098_gtd">f8b6f91fdb663300506da08a489619bc</sys_package>
         <sys_policy/>
         <sys_scope display_value="GTD">f8b6f91fdb663300506da08a489619bc</sys_scope>
         <sys_update_name>sp_widget_1f1aaa72db933300831ce37a489619d3</sys_update_name>
         <sys_updated_by>admin</sys_updated_by>
-        <sys_updated_on>2019-08-22 09:48:51</sys_updated_on>
+        <sys_updated_on>2019-08-23 10:04:19</sys_updated_on>
         <template><![CDATA[<!DOCTYPE html>
 <html lang="en">
   <body>
