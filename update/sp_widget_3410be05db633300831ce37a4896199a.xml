@@ -1,0 +1,128 @@
+<?xml version="1.0" encoding="UTF-8"?><record_update table="sp_widget">
+    <sp_widget action="INSERT_OR_UPDATE">
+        <category>custom</category>
+        <client_script><![CDATA[function() {
+	/* widget controller */
+	var c = this;
+	console.log(c.data);
+
+	var ctx = document.getElementById('myChart').getContext('2d');
+
+	var myLineChart = new Chart(ctx, {
+		type: 'line',
+		data: {
+			// Labels should be Date objects
+			labels: c.data.labels,
+			datasets: [{
+				fill: false,
+				label: 'Tasks created',
+				data: c.data.data,
+				borderColor: '#0caab0',
+				backgroundColor: '#0caab0'
+			}]
+		},
+		options: {
+			fill: false,
+			responsive: true,
+			scales: {
+				xAxes: [{
+					type: 'time',
+					time: {
+						unit: 'day'
+					},
+					display: true,
+					scaleLabel: {
+						display: true,
+						labelString: "Date"
+					}
+				}],
+				yAxes: [{
+					ticks: {
+						beginAtZero: true
+					},
+					display: true,
+					scaleLabel: {
+						display: true,
+						labelString: "Tasks created"
+					}
+				}]
+			}
+		}
+	});
+	
+}
+
+]]></client_script>
+        <controller_as>c</controller_as>
+        <css/>
+        <data_table>sp_instance</data_table>
+        <demo_data/>
+        <description/>
+        <docs/>
+        <field_list/>
+        <has_preview>false</has_preview>
+        <id>line_chart</id>
+        <internal>false</internal>
+        <link><![CDATA[function link(scope, element, attrs, controller) {  }]]></link>
+        <name>Line Chart</name>
+        <option_schema/>
+        <public>false</public>
+        <roles/>
+        <script><![CDATA[(function() {
+  /* populate the 'data' object */
+  /* e.g., data.table = $sp.getValue('table'); */
+	data.tasks = [];
+	data.labels = [];
+	data.data = [];
+	
+	var queryString = 'assigned_to=' + gs.getUserID() + '^ORsys_created_by=' + gs.getUserName();
+	var taskGR = new GlideRecord('x_380098_gtd_tasks');
+	taskGR.addEncodedQuery(queryString);
+	taskGR.orderBy('sys_created_on');
+	taskGR.query();
+	while (taskGR.next()) {
+		var taskObj = {};
+		//use service portal helper method to get some display values
+		$sp.getRecordDisplayValues(taskObj, taskGR, 'title,category,assigned_to,sys_id,state,priority,sys_created_on');
+		//push the populated obj into the array
+		data.tasks.push(taskObj);
+	}
+
+	for (i=0;i<data.tasks.length;i++) {
+		var date = new GlideDateTime(data.tasks[i].sys_created_on);
+		date = date.getDate().toString();
+		if (data.labels.indexOf(date) == -1) {
+			data.labels.push(date);
+			data.data.push(1);
+		} else {
+			data.data[data.labels.indexOf(date)] += 1;
+		}
+	}
+	
+
+})();]]></script>
+        <servicenow>false</servicenow>
+        <sys_class_name>sp_widget</sys_class_name>
+        <sys_created_by>admin</sys_created_by>
+        <sys_created_on>2019-08-27 05:50:16</sys_created_on>
+        <sys_id>3410be05db633300831ce37a4896199a</sys_id>
+        <sys_mod_count>59</sys_mod_count>
+        <sys_name>Line Chart</sys_name>
+        <sys_package display_value="GTD" source="x_380098_gtd">f8b6f91fdb663300506da08a489619bc</sys_package>
+        <sys_policy/>
+        <sys_scope display_value="GTD">f8b6f91fdb663300506da08a489619bc</sys_scope>
+        <sys_update_name>sp_widget_3410be05db633300831ce37a4896199a</sys_update_name>
+        <sys_updated_by>admin</sys_updated_by>
+        <sys_updated_on>2019-08-27 09:56:48</sys_updated_on>
+        <template><![CDATA[<!DOCTYPE html>
+<html lang='en'>
+  <head>
+  </head>
+  <body>
+    <div class="chart-container" style="margin-left: auto; margin-right: auto; height:20vh; width:40vw">
+      <canvas id="myChart"></canvas>
+    </div>
+  </body>
+</html>]]></template>
+    </sp_widget>
+</record_update>

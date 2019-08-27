@@ -9,13 +9,11 @@
 	
 	function findNewHashtags(searchText, currentHashtags) {
 		var regexp = /\B\#\w\w+\b/g
-		result = searchText.match(regexp);
+		var result = searchText.match(regexp);
 		var newHashtags = [];
 		if (result) {
 			for (i=0;i<result.length;i++) {
-				console.log(result[i]);
-				console.log(currentHashtags);
-				if (currentHashtags.indexOf(result[i]) == 0) {
+				if (currentHashtags.indexOf(result[i]) == -1) {
 					newHashtags.push(result[i]);
 				}
 			}
@@ -52,7 +50,6 @@
 		}).then(function() {
 			document.getElementById("summernote").innerHTML = c.data.meeting_notes;
 			for (i=0;i<c.data.actions.length;i++) {
-				console.log(c.data.actions);
 				insertAction(
 					c.data.actions[i].title,
 					c.data.actions[i].assigned_to.name,
@@ -76,7 +73,7 @@
 					match: /\B#(\w*)$/,
 					search: function (keyword, callback) {
 						callback($.grep(this.mentions, function (item) {
-							return item.indexOf(keyword) == 0;
+							return item.indexOf('#' + keyword) == 0;
 						}));
 					},
 					content: function (item) {
@@ -94,10 +91,12 @@
 			c.server.get({
 				action: 'updateEvent',
 				eventID: c.data.sys_id,
+				newTags: newHashtags,
 				meetingNotes: markupStr
 			}).then(function(r) {
 				$('#summernote').summernote('destroy');
 				c.data.meeting_notes = markupStr;
+				c.data.tags = c.data.tags.concat(newHashtags);
 				document.getElementById("summernote").innerHTML = markupStr;
 				document.getElementById("edit-minutes").innerHTML = 'Edit'
 			})
@@ -173,7 +172,6 @@
 	data.tags = [];
 	
 	if (input && input.eventID) {
-		console.log(input);
 		var event = new GlideRecord('x_380098_gtd_events');
 		var task = new GlideRecord('x_380098_gtd_tasks');
 		var tag = new GlideRecord('x_380098_gtd_tags');
@@ -207,6 +205,14 @@
 			else if (input.action == 'updateEvent') {
 				event.meeting_notes = input.meetingNotes;
 				event.update();
+				if (input.newTags.length > 0) {
+					for (i=0;i<input.newTags.length;i++) {
+						tag.initialize();
+						tag.name = input.newTags[i];
+						tag.insert();
+						gs.addInfoMessage('New hashtag created ' + input.newTags[i]);
+					}
+				}
 			}
 			else if (input.action == 'addTask') {
 				console.log(input);
@@ -227,14 +233,14 @@
         <sys_created_by>admin</sys_created_by>
         <sys_created_on>2019-08-20 05:37:53</sys_created_on>
         <sys_id>1f1aaa72db933300831ce37a489619d3</sys_id>
-        <sys_mod_count>280</sys_mod_count>
+        <sys_mod_count>299</sys_mod_count>
         <sys_name>Event Form</sys_name>
         <sys_package display_value="GTD" source="x_380098_gtd">f8b6f91fdb663300506da08a489619bc</sys_package>
         <sys_policy/>
         <sys_scope display_value="GTD">f8b6f91fdb663300506da08a489619bc</sys_scope>
         <sys_update_name>sp_widget_1f1aaa72db933300831ce37a489619d3</sys_update_name>
         <sys_updated_by>admin</sys_updated_by>
-        <sys_updated_on>2019-08-23 10:04:19</sys_updated_on>
+        <sys_updated_on>2019-08-27 05:40:18</sys_updated_on>
         <template><![CDATA[<!DOCTYPE html>
 <html lang="en">
   <body>
