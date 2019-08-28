@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?><record_update table="oauth_entity_scope">
+    <oauth_entity_scope action="INSERT_OR_UPDATE">
+        <name>https://www.googleapis.com/auth/calendar.settings.readonly</name>
+        <oauth_entity display_value="Google Calendar">845fc061db233300831ce37a489619a8</oauth_entity>
+        <oauth_entity_scope>https://www.googleapis.com/auth/calendar.settings.readonly</oauth_entity_scope>
+        <sys_class_name>oauth_entity_scope</sys_class_name>
+        <sys_created_by>admin</sys_created_by>
+        <sys_created_on>2019-08-28 07:29:06</sys_created_on>
+        <sys_id>712050a1db233300831ce37a4896194d</sys_id>
+        <sys_mod_count>0</sys_mod_count>
+        <sys_name>https://www.googleapis.com/auth/calendar.settings.readonly</sys_name>
+        <sys_package display_value="GTD" source="x_380098_gtd">f8b6f91fdb663300506da08a489619bc</sys_package>
+        <sys_policy/>
+        <sys_scope display_value="GTD">f8b6f91fdb663300506da08a489619bc</sys_scope>
+        <sys_update_name>oauth_entity_scope_712050a1db233300831ce37a4896194d</sys_update_name>
+        <sys_updated_by>admin</sys_updated_by>
+        <sys_updated_on>2019-08-28 07:29:06</sys_updated_on>
+    </oauth_entity_scope>
+</record_update>
