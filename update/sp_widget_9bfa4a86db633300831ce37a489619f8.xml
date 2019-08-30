@@ -1,0 +1,154 @@
+<?xml version="1.0" encoding="UTF-8"?><record_update table="sp_widget">
+    <sp_widget action="INSERT_OR_UPDATE">
+        <category>custom</category>
+        <client_script><![CDATA[function() {
+	/* widget controller */
+	var c = this;
+	
+	var numberWithCommas = function(x) {
+		return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+	};
+
+	var ctx = document.getElementById('myBarChart').getContext('2d');
+
+	var bar_chart = new Chart(ctx, {
+		type: 'bar',
+		data: {
+			labels: c.data.labels,
+			datasets: [{
+				label: 'Open',
+				data: c.data.data.series_a,
+				backgroundColor: "#5ADBFF",
+				hoverBackgroundColor: "#5ADBFF",
+				hoverBorderWidth: 2,
+				hoverBorderColor: 'lightgrey'
+			},
+								 {
+									 label: 'Closed',
+									 data: c.data.data.series_b,
+									 backgroundColor: "#3C6997",
+									 hoverBackgroundColor: "#3C6997",
+									 hoverBorderWidth: 2,
+									 hoverBorderColor: 'lightgrey'
+								 }
+								]
+		},
+		options: {
+			animation: {
+				duration: 10
+			},
+			tooltips: {
+				mode: 'label',
+				callbacks: {
+					label: function(tooltipItem, data) {
+						return data.datasets[tooltipItem.datasetIndex].label + ": " + numberWithCommas(tooltipItem.yLabel);
+					}
+				}
+			},
+			scales: {
+				xAxes: [{
+					stacked: true,
+					gridLines: {
+						display: false
+					}
+				}],
+				yAxes: [{
+					stacked: true,
+					ticks: {
+						callback: function(value) {
+							return numberWithCommas(value);
+						}
+					}
+				}]
+			}, // scales
+			legend: {
+				display: true
+			}
+		} // options
+	});
+
+}]]></client_script>
+        <controller_as>c</controller_as>
+        <css/>
+        <data_table>sp_instance</data_table>
+        <demo_data/>
+        <description/>
+        <docs/>
+        <field_list/>
+        <has_preview>false</has_preview>
+        <id>bar_chart</id>
+        <internal>false</internal>
+        <link><![CDATA[function link(scope, element, attrs, controller) {  }]]></link>
+        <name>Bar Chart</name>
+        <option_schema/>
+        <public>false</public>
+        <roles/>
+        <script><![CDATA[(function() {
+  /* populate the 'data' object */
+	/* e.g., data.table = $sp.getValue('table'); */
+	data.tasks = [];
+	data.labels = [];
+	data.data = {
+		series_a: [],
+		series_b: []
+	};
+
+	var queryString = 'assigned_to=' + gs.getUserID() + '^ORsys_created_by=' + gs.getUserName();
+	var taskGR = new GlideRecord('x_380098_gtd_tasks');
+	taskGR.addEncodedQuery(queryString);
+	taskGR.orderBy('sys_created_on');
+	taskGR.query();
+	while (taskGR.next()) {
+		var taskObj = {};
+		//use service portal helper method to get some display values
+		$sp.getRecordDisplayValues(taskObj, taskGR, 'title,category,assigned_to,sys_id,state,priority,sys_created_on');
+		//push the populated obj into the array
+		data.tasks.push(taskObj);
+	}
+	
+	for (i=0;i<data.tasks.length;i++) {
+		if (data.labels.indexOf(data.tasks[i].category) == -1) {
+			data.labels.push(data.tasks[i].category);
+			if (data.tasks[i].state == 'Open') {
+				data.data.series_a.push(1);
+				data.data.series_b.push(0);
+			} else {
+				data.data.series_b.push(1);
+				data.data.series_a.push(0);
+			}			
+		} else {
+			if (data.tasks[i].state == 'Open') {
+				data.data.series_a[data.labels.indexOf(data.tasks[i].category)] += 1;
+			} else {
+				data.data.series_b[data.labels.indexOf(data.tasks[i].category)] += 1;
+			}
+		}
+	}
+
+})();]]></script>
+        <servicenow>false</servicenow>
+        <sys_class_name>sp_widget</sys_class_name>
+        <sys_created_by>admin</sys_created_by>
+        <sys_created_on>2019-08-30 05:42:10</sys_created_on>
+        <sys_id>9bfa4a86db633300831ce37a489619f8</sys_id>
+        <sys_mod_count>18</sys_mod_count>
+        <sys_name>Bar Chart</sys_name>
+        <sys_package display_value="GTD" source="x_380098_gtd">f8b6f91fdb663300506da08a489619bc</sys_package>
+        <sys_policy/>
+        <sys_scope display_value="GTD">f8b6f91fdb663300506da08a489619bc</sys_scope>
+        <sys_update_name>sp_widget_9bfa4a86db633300831ce37a489619f8</sys_update_name>
+        <sys_updated_by>admin</sys_updated_by>
+        <sys_updated_on>2019-08-30 08:10:55</sys_updated_on>
+        <template><![CDATA[<!DOCTYPE html>
+<html lang='en'>
+  <head>
+  </head>
+  <body>
+    <h4 class="text-center">Tasks by Category</h4>
+    <div class="chart-container">
+      <canvas id="myBarChart"></canvas>
+    </div>
+  </body>
+</html>]]></template>
+    </sp_widget>
+</record_update>

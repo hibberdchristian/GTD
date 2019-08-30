@@ -4,6 +4,8 @@
         <client_script><![CDATA[function($rootScope,$scope,spModal) {
 	/* widget controller */
 	var c = this;
+	console.log(c.data.assignees);
+	
 	c.selectItem = function(sysId) {
 		var id = sysId;
 		console.log('Task ID: ' + id);
@@ -161,7 +163,7 @@
 }
 .swimlane-body {
   overflow-y: scroll;
-  height: 440px;
+  height: 360px;
   padding: 5px
 }
 .row {
@@ -282,14 +284,14 @@
         <sys_created_by>admin</sys_created_by>
         <sys_created_on>2019-07-18 08:01:47</sys_created_on>
         <sys_id>5d9e0990db72330052520181ca96191d</sys_id>
-        <sys_mod_count>652</sys_mod_count>
+        <sys_mod_count>657</sys_mod_count>
         <sys_name>Kanban Board</sys_name>
         <sys_package display_value="GTD" source="x_380098_gtd">f8b6f91fdb663300506da08a489619bc</sys_package>
         <sys_policy/>
         <sys_scope display_value="GTD">f8b6f91fdb663300506da08a489619bc</sys_scope>
         <sys_update_name>sp_widget_5d9e0990db72330052520181ca96191d</sys_update_name>
         <sys_updated_by>admin</sys_updated_by>
-        <sys_updated_on>2019-08-22 09:56:23</sys_updated_on>
+        <sys_updated_on>2019-08-30 09:32:14</sys_updated_on>
         <template><![CDATA[<div class="container-fluid" id="drag-and-drop">
 
   <script>

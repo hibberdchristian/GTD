@@ -10,23 +10,23 @@
         <roles/>
         <short_description/>
         <size>md</size>
-        <sp_column display_value="1">42efaa05db633300831ce37a489619d4</sp_column>
-        <sp_widget display_value="Line Chart">3410be05db633300831ce37a4896199a</sp_widget>
+        <sp_column display_value="2">33383e82dbe33300831ce37a4896199a</sp_column>
+        <sp_widget display_value="Bar Chart">9bfa4a86db633300831ce37a489619f8</sp_widget>
         <sys_class_name>sp_instance</sys_class_name>
         <sys_created_by>admin</sys_created_by>
-        <sys_created_on>2019-08-27 05:50:40</sys_created_on>
-        <sys_id>e6203205db633300831ce37a489619d7</sys_id>
+        <sys_created_on>2019-08-30 09:00:11</sys_created_on>
+        <sys_id>c458ba02dbe33300831ce37a489619a7</sys_id>
         <sys_mod_count>0</sys_mod_count>
         <sys_name/>
         <sys_package display_value="GTD" source="x_380098_gtd">f8b6f91fdb663300506da08a489619bc</sys_package>
         <sys_policy/>
         <sys_scope display_value="GTD">f8b6f91fdb663300506da08a489619bc</sys_scope>
-        <sys_update_name>sp_instance_e6203205db633300831ce37a489619d7</sys_update_name>
+        <sys_update_name>sp_instance_c458ba02dbe33300831ce37a489619a7</sys_update_name>
         <sys_updated_by>admin</sys_updated_by>
-        <sys_updated_on>2019-08-27 05:50:40</sys_updated_on>
+        <sys_updated_on>2019-08-30 09:00:11</sys_updated_on>
         <title/>
         <url/>
         <widget_parameters/>
     </sp_instance>
-    <sys_translated_text action="delete_multiple" query="documentkey=e6203205db633300831ce37a489619d7"/>
+    <sys_translated_text action="delete_multiple" query="documentkey=c458ba02dbe33300831ce37a489619a7"/>
 </record_update>

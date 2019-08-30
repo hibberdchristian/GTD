@@ -4,7 +4,6 @@
         <client_script><![CDATA[function() {
 	/* widget controller */
 	var c = this;
-	console.log(c.data);
 
 	var ctx = document.getElementById('myChart').getContext('2d');
 
@@ -14,11 +13,11 @@
 			// Labels should be Date objects
 			labels: c.data.labels,
 			datasets: [{
+				label: 'Tasks opened',
 				fill: false,
-				label: 'Tasks created',
 				data: c.data.data,
-				borderColor: '#0caab0',
-				backgroundColor: '#0caab0'
+				borderColor: '#094074',
+				backgroundColor: '#094074'
 			}]
 		},
 		options: {
@@ -30,21 +29,13 @@
 					time: {
 						unit: 'day'
 					},
-					display: true,
-					scaleLabel: {
-						display: true,
-						labelString: "Date"
-					}
+					display: true
 				}],
 				yAxes: [{
 					ticks: {
 						beginAtZero: true
 					},
-					display: true,
-					scaleLabel: {
-						display: true,
-						labelString: "Tasks created"
-					}
+					display: true
 				}]
 			}
 		}
@@ -106,20 +97,21 @@
         <sys_created_by>admin</sys_created_by>
         <sys_created_on>2019-08-27 05:50:16</sys_created_on>
         <sys_id>3410be05db633300831ce37a4896199a</sys_id>
-        <sys_mod_count>59</sys_mod_count>
+        <sys_mod_count>65</sys_mod_count>
         <sys_name>Line Chart</sys_name>
         <sys_package display_value="GTD" source="x_380098_gtd">f8b6f91fdb663300506da08a489619bc</sys_package>
         <sys_policy/>
         <sys_scope display_value="GTD">f8b6f91fdb663300506da08a489619bc</sys_scope>
         <sys_update_name>sp_widget_3410be05db633300831ce37a4896199a</sys_update_name>
         <sys_updated_by>admin</sys_updated_by>
-        <sys_updated_on>2019-08-27 09:56:48</sys_updated_on>
+        <sys_updated_on>2019-08-30 08:11:10</sys_updated_on>
         <template><![CDATA[<!DOCTYPE html>
 <html lang='en'>
   <head>
   </head>
   <body>
-    <div class="chart-container" style="margin-left: auto; margin-right: auto; height:20vh; width:40vw">
+    <h4 class="text-center">Tasks Opened</h4>
+    <div class="chart-container">
       <canvas id="myChart"></canvas>
     </div>
   </body>
