@@ -4,7 +4,6 @@
         <client_script><![CDATA[function($rootScope,$scope,spModal) {
 	/* widget controller */
 	var c = this;
-	console.log(c.data.assignees);
 	
 	c.selectItem = function(sysId) {
 		var id = sysId;
@@ -41,10 +40,10 @@
 	
 	// Function to control fading on tasks on selection of users
 	c.selectUser = function(assignee) {
-		if (document.getElementById(assignee.name).classList.contains("active")) {
-			document.getElementById(assignee.name).classList.remove("active");
+		if (document.getElementById(assignee).classList.contains("active")) {
+			document.getElementById(assignee).classList.remove("active");
 		} else {
-			document.getElementById(assignee.name).classList.add("active");
+			document.getElementById(assignee).classList.add("active");
 		}
 		var activeUsers = [];
 		for (i=0;i<document.getElementById('assignee-buttons').getElementsByClassName('active').length;i++) {
@@ -233,23 +232,13 @@
 	}
 	
 	// populate data.assignees to for use with the assinged_to buttons
-	for (i=0;i<data.tasks.length;i++) {
-		var assigneeObj = {};
-		assigneeObj.name = data.tasks[i].assigned_to;
-		assigneeObj.tasks = [data.tasks[i].sys_id];
-		if(i==0) {
-			data.assignees.push(assigneeObj);
-		} else {
-			for (j=0;j<data.assignees.length;j++) {
-				if (data.tasks[i].assigned_to == data.assignees[j].name) {
-					data.assignees[j].tasks.push(data.tasks[i].sys_id);
-					break;
-				} else {
-					data.assignees.push(assigneeObj);
-					break;
-				}
-			}
-		}
+	var assigneeGA = new GlideAggregate('x_380098_gtd_tasks');
+	assigneeGA.addEncodedQuery(queryString);
+	assigneeGA.addQuery('state','0');
+	assigneeGA.groupBy('assigned_to');
+	assigneeGA.query()
+	while (assigneeGA.next()) {
+		data.assignees.push(assigneeGA.assigned_to.getDisplayValue());
 	}
 
 	if (input) {
@@ -284,14 +273,14 @@
         <sys_created_by>admin</sys_created_by>
         <sys_created_on>2019-07-18 08:01:47</sys_created_on>
         <sys_id>5d9e0990db72330052520181ca96191d</sys_id>
-        <sys_mod_count>657</sys_mod_count>
+        <sys_mod_count>663</sys_mod_count>
         <sys_name>Kanban Board</sys_name>
         <sys_package display_value="GTD" source="x_380098_gtd">f8b6f91fdb663300506da08a489619bc</sys_package>
         <sys_policy/>
         <sys_scope display_value="GTD">f8b6f91fdb663300506da08a489619bc</sys_scope>
         <sys_update_name>sp_widget_5d9e0990db72330052520181ca96191d</sys_update_name>
         <sys_updated_by>admin</sys_updated_by>
-        <sys_updated_on>2019-08-30 09:32:14</sys_updated_on>
+        <sys_updated_on>2019-10-10 05:56:35</sys_updated_on>
         <template><![CDATA[<div class="container-fluid" id="drag-and-drop">
 
   <script>
@@ -310,7 +299,7 @@
 
   <div class="row button">
     <div class="btn-group" role="group" id="assignee-buttons">
-      <button ng-repeat="assignee in data.assignees" type="button" class="btn btn-default" ng-click="c.selectUser(assignee)" id="{{assignee.name}}">{{assignee.name}}</button>
+      <button ng-repeat="assignee in data.assignees" type="button" class="btn btn-default" ng-click="c.selectUser(assignee)" id="{{assignee}}">{{assignee}}</button>
     </div>
 
     <div class="btn-group" role="group" id="priority-buttons">

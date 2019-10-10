@@ -6,10 +6,13 @@
 	var c = this;
 
 	/* pickup the sys_id from the selected item on the board */
-	$rootScope.$on('newCategory', function(event,data) {
+	var registerScope = $rootScope.$on('newCategory', function(event,data) {
 		console.log('New Category Request Received');
 		c.openModal();
 	})
+
+	/* destroy the listener to avoid duplication of the function c.openModal */
+	$scope.$on('$destroy', registerScope);
 	
 	c.openModal = function() {
 		/* open the model */
@@ -92,14 +95,14 @@
         <sys_created_by>admin</sys_created_by>
         <sys_created_on>2019-08-01 08:57:12</sys_created_on>
         <sys_id>ed812970dbc33300831ce37a4896198f</sys_id>
-        <sys_mod_count>51</sys_mod_count>
+        <sys_mod_count>52</sys_mod_count>
         <sys_name>New Category Modal</sys_name>
         <sys_package display_value="GTD" source="x_380098_gtd">f8b6f91fdb663300506da08a489619bc</sys_package>
         <sys_policy/>
         <sys_scope display_value="GTD">f8b6f91fdb663300506da08a489619bc</sys_scope>
         <sys_update_name>sp_widget_ed812970dbc33300831ce37a4896198f</sys_update_name>
         <sys_updated_by>admin</sys_updated_by>
-        <sys_updated_on>2019-08-20 07:10:14</sys_updated_on>
+        <sys_updated_on>2019-10-10 07:13:05</sys_updated_on>
         <template><![CDATA[<script type="text/ng-template" id="newCategoryModal">
 
 <div class="panel panel-default">
