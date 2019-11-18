@@ -1,0 +1,158 @@
+<?xml version="1.0" encoding="UTF-8"?><record_update table="sys_script_fix">
+    <sys_script_fix action="INSERT_OR_UPDATE">
+        <active>true</active>
+        <before>false</before>
+        <description>Script to syncronise Google Calendar with the GTN Application</description>
+        <flush_cache>false</flush_cache>
+        <name>Google Calendar Sync</name>
+        <record_for_rollback>false</record_for_rollback>
+        <run_once>true</run_once>
+        <script><![CDATA[gs.log("Parsing Google Calendar Events");
+
+var arr = []; // array to save all events IDs
+
+InsertUpdate();
+
+function InsertUpdate() {
+	
+	try {
+		
+		var r = new sn_ws.RESTMessageV2('Google Calendar', 'Default GET');
+		r.setStringParameterNoEscape('calendarId', 'gtd.applications@gmail.com');
+		var response = r.execute();
+		var responseBody = response.getBody();
+		var httpStatus = response.getStatusCode();
+		
+		// parse the response data
+		var parser = new JSONParser();
+		var parsedData = parser.parse(responseBody);
+		
+		for(var i=69;i<parsedData.items.length;i++) {
+			
+			// declare variable to be used
+			var summary = parsedData.items[i].summary; // summary is the event Name in Snow
+			var organizer = parsedData.items[i].organizer.displayName;
+			var email = parsedData.items[i].organizer.email;
+			var description = parsedData.items[i].description;
+			var start = parsedData.items[i].start.dateTime;
+			var end = parsedData.items[i].end.dateTime;
+			var googleid = parsedData.items[i].id; // this variable : googleid will be used as a unique id for inserting updating or deleting events
+			
+			arr.push(googleid.toString());
+			
+			// convert google date time to servicenow format
+			var sec = Date.parse(start);
+			var dateStr = start.substring(0,start.indexOf('+'));
+			var dateEnd = end.substring(0,end.indexOf('+'));
+			var dateStr1 = dateStr.toString().concat("","Z");dateStr1=dateStr1.replace(/-/g,"");dateStr1=dateStr1.replace(/:/g,"");
+			var dateEnd1 = dateEnd.toString().concat("","Z");dateEnd1=dateEnd1.replace(/-/g,"");dateEnd1=dateEnd1.replace(/:/g,"");
+			
+			// convert timedate format to GlideDateTime
+			var calendar_start = new GlideDateTime();
+			calendar_start.setValue(dateStr2);
+			var calendar_end = new GlideDateTime();
+			calendar_end.setValue(dateEnd2);
+			
+			// convert timedate format to GlideScheduleDateTime
+			var calendar_Schedule_start = new GlideScheduleDateTime(calendar_start.getDisplayValue());
+			var calendar_Schedule_end = new GlideScheduleDateTime(calendar_end.getDisplayValue());
+			
+			if (parsedData.items[i].attendees.length > 0) {
+				
+				for (var j=0;j<parsedData.items[i].attendees.length;j++) {
+					
+					var attendee = parsedData.items[i].attendees[j].email;
+					gs.log("attendees :[" + j + "]"+attendee);
+					
+				}
+			}
+			
+			// insert into service now Data base
+			// before inserting we should verify if the record already exist in the servicenow database
+			
+			var calendarbase = new GlideRecord('user_calendar_event');
+			calendarbase.addQuery('u_number',googleid);
+			calendarbase.query();
+			var count = calendarbase.getRowCount();
+			
+			if (count > 0) {
+				
+				while (calendarbase.next()) {
+					
+					calendarbase.name = summary;
+					calendarbase.start_date_time = calendar_Schedule_start;
+					calendarbase.end_date_time = calendar_Schedule_end;
+					calendarbase.update();
+					
+				}
+			} else {
+				
+				calendarbase.initialize();
+				calendarbase.name = summary;
+				
+				// get the user name based on the user email from the google calendar event
+				var target = new GlideRecord('sys_user');
+				target.addQuery('email',email);
+				target.query(); // issue the query to the database to get relevant records
+				
+				while (target.next()) {
+					
+					// add code here to process the incident record
+					calendarbase.setDisplayValue('user',target.name);
+				}
+				
+				calendarbase.start_date_time = calendar_Schedule_start;
+				calendarbase.end_date_time = calendar_Schedule_end;
+				calendarbase.type = 'Meeting';
+				calendarbase.u_number = googleid;
+				calendarbase.insert();
+				
+			}
+			
+		}
+		
+	} catch(ex) {
+		
+		var message = ex.message;
+		
+	}
+	
+} // end InsertUpdate() function
+
+
+
+//Delete Event
+
+var calendarbase1 = new GlideRecord('user_calendar_event');
+calendarbase1.query();
+
+while(calendarbase1.next()) {
+	
+	var noo = arr.indexOf(calendarbase1.getValue('u_number'));
+	
+	if (noo!=-1) {
+		
+		gs.log("Not Deleting Any Records");
+		
+	} else {
+		
+		calendarbase1.deleteRecord();
+		
+	}
+	
+}]]></script>
+        <sys_class_name>sys_script_fix</sys_class_name>
+        <sys_created_by>admin</sys_created_by>
+        <sys_created_on>2019-11-18 10:16:54</sys_created_on>
+        <sys_id>64f10bf34fc1401001ab9acf9310c785</sys_id>
+        <sys_mod_count>0</sys_mod_count>
+        <sys_name>Google Calendar Sync</sys_name>
+        <sys_package display_value="GTD" source="x_380098_gtd">f8b6f91fdb663300506da08a489619bc</sys_package>
+        <sys_policy/>
+        <sys_scope display_value="GTD">f8b6f91fdb663300506da08a489619bc</sys_scope>
+        <sys_update_name>sys_script_fix_64f10bf34fc1401001ab9acf9310c785</sys_update_name>
+        <sys_updated_by>admin</sys_updated_by>
+        <sys_updated_on>2019-11-18 10:16:54</sys_updated_on>
+        <unloadable>false</unloadable>
+    </sys_script_fix>
+</record_update>

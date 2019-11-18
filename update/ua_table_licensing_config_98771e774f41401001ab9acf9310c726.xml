@@ -4,22 +4,22 @@
         <license_condition/>
         <license_model>none</license_model>
         <license_roles/>
-        <name>x_380098_gtd_events</name>
+        <name>x_380098_gtd_tasks</name>
         <op_delete>true</op_delete>
         <op_insert>true</op_insert>
         <op_update>true</op_update>
         <owner_condition/>
         <sys_class_name>ua_table_licensing_config</sys_class_name>
         <sys_created_by>admin</sys_created_by>
-        <sys_created_on>2019-08-20 02:16:17</sys_created_on>
-        <sys_id>86fbbd36db133300831ce37a48961952</sys_id>
+        <sys_created_on>2019-07-15 08:27:06</sys_created_on>
+        <sys_id>98771e774f41401001ab9acf9310c726</sys_id>
         <sys_mod_count>0</sys_mod_count>
-        <sys_name>x_380098_gtd_events</sys_name>
+        <sys_name>x_380098_gtd_tasks</sys_name>
         <sys_package display_value="GTD" source="x_380098_gtd">f8b6f91fdb663300506da08a489619bc</sys_package>
         <sys_policy/>
         <sys_scope display_value="GTD">f8b6f91fdb663300506da08a489619bc</sys_scope>
-        <sys_update_name>ua_table_licensing_config_86fbbd36db133300831ce37a48961952</sys_update_name>
+        <sys_update_name>ua_table_licensing_config_98771e774f41401001ab9acf9310c726</sys_update_name>
         <sys_updated_by>admin</sys_updated_by>
-        <sys_updated_on>2019-08-20 02:16:17</sys_updated_on>
+        <sys_updated_on>2019-07-15 08:27:06</sys_updated_on>
     </ua_table_licensing_config>
 </record_update>
