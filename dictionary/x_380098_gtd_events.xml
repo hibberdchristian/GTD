@@ -4,6 +4,7 @@
         <element label="Attendees" max_length="4000" name="attendees" reference="sys_user" type="glide_list"/>
         <element label="Description" max_length="500" name="description" type="string"/>
         <element label="End Time" max_length="40" name="end_time" type="glide_date_time"/>
+        <element label="Event ID" max_length="50" name="event_id" type="string"/>
         <element label="Location" max_length="40" name="location" type="string"/>
         <element label="Meeting Notes" max_length="8000" name="meeting_notes" type="html"/>
         <element attributes="ignore_filter_on_new=true" default="javascript:global.getNextObjNumberPadded();" label="Number" max_length="40" name="number" type="string"/>

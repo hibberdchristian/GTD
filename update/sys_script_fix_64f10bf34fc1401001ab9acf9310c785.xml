@@ -6,8 +6,8 @@
         <flush_cache>false</flush_cache>
         <name>Google Calendar Sync</name>
         <record_for_rollback>false</record_for_rollback>
-        <run_once>true</run_once>
-        <script><![CDATA[gs.log("Parsing Google Calendar Events");
+        <run_once>false</run_once>
+        <script><![CDATA[gs.info("Parsing Google Calendar Events");
 
 var arr = []; // array to save all events IDs
 
@@ -24,10 +24,9 @@ function InsertUpdate() {
 		var httpStatus = response.getStatusCode();
 		
 		// parse the response data
-		var parser = new JSONParser();
-		var parsedData = parser.parse(responseBody);
+		var parsedData = JSON.parse(responseBody);
 		
-		for(var i=69;i<parsedData.items.length;i++) {
+		for(var i = 0; i < parsedData.items.length; i++) {
 			
 			// declare variable to be used
 			var summary = parsedData.items[i].summary; // summary is the event Name in Snow
@@ -62,16 +61,16 @@ function InsertUpdate() {
 				for (var j=0;j<parsedData.items[i].attendees.length;j++) {
 					
 					var attendee = parsedData.items[i].attendees[j].email;
-					gs.log("attendees :[" + j + "]"+attendee);
+					gs.info("attendees :[" + j + "]"+attendee);
 					
 				}
 			}
 			
-			// insert into service now Data base
+			// insert into serviceNow Data base
 			// before inserting we should verify if the record already exist in the servicenow database
 			
-			var calendarbase = new GlideRecord('user_calendar_event');
-			calendarbase.addQuery('u_number',googleid);
+			var calendarbase = new GlideRecord('x_380098_gtd_events');
+			calendarbase.addQuery('event_id',googleid);
 			calendarbase.query();
 			var count = calendarbase.getRowCount();
 			
@@ -79,16 +78,16 @@ function InsertUpdate() {
 				
 				while (calendarbase.next()) {
 					
-					calendarbase.name = summary;
-					calendarbase.start_date_time = calendar_Schedule_start;
-					calendarbase.end_date_time = calendar_Schedule_end;
+					calendarbase.description = summary;
+					calendarbase.start_time = calendar_Schedule_start;
+					calendarbase.end_time = calendar_Schedule_end;
 					calendarbase.update();
 					
 				}
 			} else {
 				
 				calendarbase.initialize();
-				calendarbase.name = summary;
+				calendarbase.description = summary;
 				
 				// get the user name based on the user email from the google calendar event
 				var target = new GlideRecord('sys_user');
@@ -101,10 +100,9 @@ function InsertUpdate() {
 					calendarbase.setDisplayValue('user',target.name);
 				}
 				
-				calendarbase.start_date_time = calendar_Schedule_start;
-				calendarbase.end_date_time = calendar_Schedule_end;
-				calendarbase.type = 'Meeting';
-				calendarbase.u_number = googleid;
+				calendarbase.start_time = calendar_Schedule_start;
+				calendarbase.end_time = calendar_Schedule_end;
+				calendarbase.event_id = googleid;
 				calendarbase.insert();
 				
 			}
@@ -123,16 +121,16 @@ function InsertUpdate() {
 
 //Delete Event
 
-var calendarbase1 = new GlideRecord('user_calendar_event');
+var calendarbase1 = new GlideRecord('x_380098_gtd_events');
 calendarbase1.query();
 
 while(calendarbase1.next()) {
 	
-	var noo = arr.indexOf(calendarbase1.getValue('u_number'));
+	var noo = arr.indexOf(calendarbase1.getValue('event_id'));
 	
 	if (noo!=-1) {
 		
-		gs.log("Not Deleting Any Records");
+		gs.info("Not Deleting Any Records");
 		
 	} else {
 		
@@ -145,14 +143,14 @@ while(calendarbase1.next()) {
         <sys_created_by>admin</sys_created_by>
         <sys_created_on>2019-11-18 10:16:54</sys_created_on>
         <sys_id>64f10bf34fc1401001ab9acf9310c785</sys_id>
-        <sys_mod_count>0</sys_mod_count>
+        <sys_mod_count>16</sys_mod_count>
         <sys_name>Google Calendar Sync</sys_name>
         <sys_package display_value="GTD" source="x_380098_gtd">f8b6f91fdb663300506da08a489619bc</sys_package>
         <sys_policy/>
         <sys_scope display_value="GTD">f8b6f91fdb663300506da08a489619bc</sys_scope>
         <sys_update_name>sys_script_fix_64f10bf34fc1401001ab9acf9310c785</sys_update_name>
         <sys_updated_by>admin</sys_updated_by>
-        <sys_updated_on>2019-11-18 10:16:54</sys_updated_on>
+        <sys_updated_on>2019-11-19 10:06:35</sys_updated_on>
         <unloadable>false</unloadable>
     </sys_script_fix>
 </record_update>
