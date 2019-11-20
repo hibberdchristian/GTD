@@ -9,7 +9,7 @@
         <run_once>false</run_once>
         <script><![CDATA[gs.info("Parsing Google Calendar Events");
 
-var arr = []; // array to save all events IDs
+var myEvents = []; // array to save all events IDs
 
 InsertUpdate();
 
@@ -30,44 +30,15 @@ function InsertUpdate() {
 			
 			// declare variable to be used
 			var summary = parsedData.items[i].summary; // summary is the event Name in Snow
-			var organizer = parsedData.items[i].organizer.displayName;
 			var email = parsedData.items[i].organizer.email;
-			var description = parsedData.items[i].description;
 			var start = parsedData.items[i].start.dateTime;
 			var end = parsedData.items[i].end.dateTime;
 			var googleid = parsedData.items[i].id; // this variable : googleid will be used as a unique id for inserting updating or deleting events
 			
-			arr.push(googleid.toString());
+			myEvents.push(googleid.toString());
 			
-			// convert google date time to servicenow format
-			var sec = Date.parse(start);
-			var dateStr = start.substring(0,start.indexOf('+'));
-			var dateEnd = end.substring(0,end.indexOf('+'));
-			var dateStr1 = dateStr.toString().concat("","Z");dateStr1=dateStr1.replace(/-/g,"");dateStr1=dateStr1.replace(/:/g,"");
-			var dateEnd1 = dateEnd.toString().concat("","Z");dateEnd1=dateEnd1.replace(/-/g,"");dateEnd1=dateEnd1.replace(/:/g,"");
-			
-			// convert timedate format to GlideDateTime
-			var calendar_start = new GlideDateTime();
-			calendar_start.setValue(dateStr2);
-			var calendar_end = new GlideDateTime();
-			calendar_end.setValue(dateEnd2);
-			
-			// convert timedate format to GlideScheduleDateTime
-			var calendar_Schedule_start = new GlideScheduleDateTime(calendar_start.getDisplayValue());
-			var calendar_Schedule_end = new GlideScheduleDateTime(calendar_end.getDisplayValue());
-			
-			if (parsedData.items[i].attendees.length > 0) {
-				
-				for (var j=0;j<parsedData.items[i].attendees.length;j++) {
-					
-					var attendee = parsedData.items[i].attendees[j].email;
-					gs.info("attendees :[" + j + "]"+attendee);
-					
-				}
-			}
-			
-			// insert into serviceNow Data base
-			// before inserting we should verify if the record already exist in the servicenow database
+			// insert into ServiceNow Data base
+			// before inserting verify if the record already exist in the servicenow database
 			
 			var calendarbase = new GlideRecord('x_380098_gtd_events');
 			calendarbase.addQuery('event_id',googleid);
@@ -79,11 +50,10 @@ function InsertUpdate() {
 				while (calendarbase.next()) {
 					
 					calendarbase.description = summary;
-					calendarbase.start_time = calendar_Schedule_start;
-					calendarbase.end_time = calendar_Schedule_end;
 					calendarbase.update();
 					
 				}
+				
 			} else {
 				
 				calendarbase.initialize();
@@ -143,14 +113,14 @@ while(calendarbase1.next()) {
         <sys_created_by>admin</sys_created_by>
         <sys_created_on>2019-11-18 10:16:54</sys_created_on>
         <sys_id>64f10bf34fc1401001ab9acf9310c785</sys_id>
-        <sys_mod_count>16</sys_mod_count>
+        <sys_mod_count>17</sys_mod_count>
         <sys_name>Google Calendar Sync</sys_name>
         <sys_package display_value="GTD" source="x_380098_gtd">f8b6f91fdb663300506da08a489619bc</sys_package>
         <sys_policy/>
         <sys_scope display_value="GTD">f8b6f91fdb663300506da08a489619bc</sys_scope>
         <sys_update_name>sys_script_fix_64f10bf34fc1401001ab9acf9310c785</sys_update_name>
         <sys_updated_by>admin</sys_updated_by>
-        <sys_updated_on>2019-11-19 10:06:35</sys_updated_on>
+        <sys_updated_on>2019-11-20 02:18:49</sys_updated_on>
         <unloadable>false</unloadable>
     </sys_script_fix>
 </record_update>
