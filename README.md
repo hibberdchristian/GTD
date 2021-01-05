@@ -1,4 +1,11 @@
-# Generated files
+# Get Things Done (GTD)
+
+A Javascript based ServiceNow application to support you in getting things done!
+
+Register for a free ServiceNow instances at the [ServiceNow Developers site](https://developer.servicenow.com/dev.do).
+
+* * * * *
+
 This repository contains generated files and a checksum.
 
 **Do not edit the files in this repository outside of an instance of ServiceNow.**
